@@ -14,88 +14,91 @@
   <!-- Shared stylesheet -->
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Minimal in-html fallback styles to ensure the page remains styled even if external CSS is missing.
-       These are intentionally small; the main stylesheet (styles.css) should provide the full design tokens and rules. */
+    /* Minimal in-html fallback & UX polish to ensure the page looks gorgeous even without full CSS.
+       These are intentionally compact; the main stylesheet (styles.css) contains the full design system. */
+
     :root{
       --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7c5cff; --glass: rgba(255,255,255,0.04);
       --radius:12px; --gap:1.25rem; --max-width:1080px; --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --accent-2: #4cc9f0;
+      --fade-in-duration: 420ms;
     }
+
     html,body{height:100%}
     body{
       margin:0; background:linear-gradient(180deg,#071021 0%,#0f1724 100%); color:#e6eef8;
       font-family:var(--font-family); -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale; line-height:1.45; padding:0 1rem;
+      -webkit-font-feature-settings: "liga" 1;
     }
-    a{color:var(--accent); text-decoration:none;}
-    a:focus{outline:3px solid rgba(124,92,255,0.25); outline-offset:3px}
-    header.site-header{max-width:var(--max-width); margin:0 auto; padding:1rem 0; display:flex; align-items:center; gap:1rem;}
+
+    a{color:var(--accent); text-decoration:none; transition: color 180ms ease, transform 180ms ease;}
+    a:hover, a:focus{ color:var(--accent-2); transform:translateY(-1px); }
+    a:focus{outline:3px solid rgba(124,92,255,0.22); outline-offset:4px}
+
+    header.site-header{max-width:var(--max-width); margin:0 auto; padding:1rem 0; display:flex; align-items:center; gap:1rem; position:relative;}
     .brand{display:flex; align-items:center; gap:.75rem;}
-    .brand__logo{width:44px; height:44px; background:linear-gradient(135deg,#7c5cff,#4cc9f0); border-radius:10px; display:inline-block;}
-    .brand__title{font-weight:700; font-size:1.05rem; color:inherit}
-    nav.primary{margin-left:auto;}
+    .brand__logo{width:48px; height:48px; background:linear-gradient(135deg,#7c5cff,#4cc9f0); border-radius:12px; display:inline-block; box-shadow: 0 8px 30px rgba(76,201,240,0.06); }
+    .brand__title{font-weight:800; font-size:1.05rem; color:inherit; letter-spacing:0.2px}
+    .brand__tagline{font-size:.78rem; color:var(--muted); margin-top:2px}
+
+    nav.primary{margin-left:auto; display:flex; align-items:center;}
     .nav-list{list-style:none; margin:0; padding:0; display:flex; gap:1rem; align-items:center;}
-    .nav-link{padding:.35rem .6rem; border-radius:8px; color:inherit; font-weight:600;}
-    .nav-link[aria-current="page"]{background:var(--glass); box-shadow:0 6px 18px rgba(2,6,23,0.6);}
-    .nav-toggle{display:none; background:transparent; border:1px solid rgba(255,255,255,0.06); padding:.5rem; border-radius:8px; color:inherit;}
-    main.site-main{max-width:var(--max-width); margin:1.5rem auto; display:grid; gap:var(--gap); align-items:start;}
-    .hero{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:2rem; border-radius:14px; box-shadow:0 10px 30px rgba(2,6,23,0.6);}
-    .hero h1{margin:0 0 .5rem; font-size:1.6rem}
+    .nav-link{padding:.45rem .75rem; border-radius:10px; color:inherit; font-weight:700; transition: background 180ms ease, transform 180ms ease;}
+    .nav-link[aria-current="page"]{background:var(--glass); box-shadow:0 8px 24px rgba(2,6,23,0.55); color:inherit;}
+    .nav-toggle{display:none; background:transparent; border:1px solid rgba(255,255,255,0.04); padding:.5rem; border-radius:10px; color:inherit;}
+
+    main.site-main{max-width:var(--max-width); margin:1.5rem auto; display:grid; gap:var(--gap); align-items:start; padding-bottom:2rem;}
+    .hero{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:2rem; border-radius:16px; box-shadow:0 16px 40px rgba(2,6,23,0.6); overflow:hidden; position:relative;}
+    .hero__decor{ position:absolute; right:-6%; top:-10%; width:48%; height:160%; background: radial-gradient(circle at 30% 20%, rgba(124,92,255,0.12), transparent 20%), linear-gradient(180deg, rgba(76,201,240,0.06), transparent); transform: rotate(-12deg); filter: blur(24px); pointer-events:none; opacity:0.9; }
+    .hero h1{margin:0 0 .5rem; font-size:1.8rem; line-height:1.04; background: linear-gradient(90deg, #e6eef8, #7c5cff 60%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; font-weight:900; letter-spacing:-0.6px; }
     .hero p{margin:0 0 1rem; color:var(--muted)}
+    .lede{ font-size:1.05rem; color:var(--muted); margin-bottom:8px; }
+
+    .promo{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:12px; background: linear-gradient(90deg, rgba(124,92,255,0.06), rgba(76,201,240,0.03)); border:1px solid rgba(255,255,255,0.02); color:var(--color-foreground); box-shadow: 0 10px 30px rgba(2,6,23,0.45); }
+    .promo .btn{ padding:8px 12px; font-weight:800; border-radius:10px; background: linear-gradient(90deg,#4fd1c5,#7c5cff); color:#021617; border:none; display:inline-flex; align-items:center; gap:8px; text-decoration:none; }
+    .promo .promo-text{ display:flex; flex-direction:column; gap:4px; }
+    .promo .promo-eyebrow{ font-weight:800; color:var(--accent-2); font-size:.87rem; letter-spacing:0.6px; text-transform:uppercase; }
+
     .grid{display:grid; gap:1rem;}
-    .card{background:rgba(255,255,255,0.02); padding:1rem; border-radius:12px; box-shadow:0 8px 20px rgba(2,6,23,0.5)}
-    footer.site-footer{max-width:var(--max-width); margin:2rem auto 3rem; padding:1rem 0; color:var(--muted); display:flex; justify-content:space-between; align-items:center;}
+    .card{background:rgba(255,255,255,0.02); padding:1rem; border-radius:12px; box-shadow:0 12px 36px rgba(2,6,23,0.5)}
+    footer.site-footer{max-width:var(--max-width); margin:2rem auto 3rem; padding:1rem 0; color:var(--muted); display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;}
     .visually-hidden{position:absolute!important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap;}
 
     /* Skip link: visually hidden by default, revealed on keyboard focus */
-    .skip-link{
-      position:absolute;
-      left:-999px;
-      top:auto;
-      width:1px;
-      height:1px;
-      overflow:hidden;
-    }
-    .skip-link:focus,
-    .skip-link:active{
-      position:fixed;
-      left:1rem;
-      top:1rem;
-      width:auto;
-      height:auto;
-      padding:.5rem 1rem;
-      background:var(--glass);
-      color:inherit;
-      border-radius:8px;
-      z-index:1000;
-      text-decoration:none;
-    }
+    .skip-link{ position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden; z-index:9999; }
+    .skip-link:focus, .skip-link:active{ position:fixed; left:1rem; top:1rem; width:auto; height:auto; padding:.5rem 1rem; background:var(--glass); color:inherit; border-radius:8px; z-index:10000; text-decoration:none; }
 
-    /* Responsive */
+    /* subtle entrance animation for hero and cards */
+    @keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+    .hero{ animation: fadeUp var(--fade-in-duration) ease both; }
+    .card{ animation: fadeUp calc(var(--fade-in-duration) + 120ms) ease both; }
+
+    /* mobile adjustments */
     @media (max-width:720px){
       header.site-header{padding:.5rem 0}
-      .nav-list{position:fixed; right:1rem; top:64px; background:linear-gradient(180deg,#071224,rgba(7,10,18,0.85)); backdrop-filter:blur(6px); border-radius:12px; padding:.75rem; flex-direction:column; display:none; min-width:180px;}
+      .nav-list{position:fixed; right:1rem; top:64px; background:linear-gradient(180deg,#071224,rgba(7,10,18,0.95)); backdrop-filter:blur(10px); border-radius:14px; padding:.9rem; flex-direction:column; display:none; min-width:200px; box-shadow: 0 22px 60px rgba(2,6,23,0.7); border:1px solid rgba(255,255,255,0.02);}
       .nav-list[data-open="true"]{display:flex}
       .nav-toggle{display:inline-flex}
       .brand__title{font-size:1rem}
+      .hero__decor{ display:none; }
     }
 
-    /* Small promo card to draw attention to demo page */
-    .promo {
-      display:flex;
-      gap:12px;
-      align-items:center;
-      padding:12px;
-      border-radius:12px;
-      background: linear-gradient(90deg, rgba(124,92,255,0.06), rgba(110,231,183,0.03));
-      border:1px solid rgba(255,255,255,0.02);
-      color:var(--color-foreground);
-      box-shadow: 0 8px 24px rgba(2,6,23,0.45);
-    }
-    .promo .btn { padding:8px 12px; font-weight:700; border-radius:10px; }
-    .muted { color:var(--muted); }
+    /* footer links - include what-we-do */
+    .site-footer a{ color:var(--muted); font-weight:700; padding:4px 6px; border-radius:8px; }
+    .site-footer a:hover, .site-footer a:focus{ color:var(--accent-2); background:rgba(124,92,255,0.03); transform:none; }
+    .site-footer a:focus-visible{ outline: 3px solid rgba(124,92,255,0.18); outline-offset:4px; background: rgba(124,92,255,0.04); }
 
-    /* small visual polish for lists inside cards */
-    .card ul { margin:0 0 0 1.1rem; }
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .hero, .card { animation: none; transition: none; }
+    }
+
+    /* small helper for improved focus visibility across interactive items */
+    :focus{ outline-offset:4px; }
+
+    /* Ensure nav is accessible when JS is disabled: do not hide nav by default via aria-hidden.
+       JS will enhance and toggle aria-hidden/data-open as needed. */
   </style>
   <link rel="author" href="https://example.com/" />
 </head>
@@ -109,7 +112,7 @@
       </a>
       <div>
         <div class="brand__title">Example AI Agency</div>
-        <div class="brand__tagline" style="font-size:.78rem; color:var(--muted)">Design & AI prototyping</div>
+        <div class="brand__tagline">Design & AI prototyping</div>
       </div>
     </div>
 
@@ -119,27 +122,31 @@
         <span class="visually-hidden">Toggle navigation</span>
       </button>
 
-      <ul id="primary-nav" class="nav-list" data-js="nav-list" data-open="false" aria-hidden="true">
+      <!-- Note: aria-hidden is intentionally not set here so the navigation is accessible without JS.
+           The JS/fallback will toggle data-open and aria-hidden for mobile behaviors. -->
+      <ul id="primary-nav" class="nav-list" data-js="nav-list" data-open="false">
         <li><a href="index.html" class="nav-link" data-js="nav-link">Home</a></li>
         <li><a href="about.html" class="nav-link" data-js="nav-link" aria-current="page">About</a></li>
         <li><a href="demo.html" class="nav-link" data-js="nav-link">Demo</a></li>
+        <li><a href="what-we-do.html" class="nav-link" data-js="nav-link">What we do</a></li>
         <li><a href="#work" class="nav-link" data-js="nav-link">Work</a></li>
         <li><a href="#contact" class="nav-link" data-js="nav-link">Contact</a></li>
-        <li><a href="https://example.com/privacy" class="nav-link" data-js="nav-link" rel="noopener noreferrer" target="_blank">Privacy</a></li>
+        <li><a href="privacy.html" class="nav-link" data-js="nav-link" aria-label="Privacy Policy">Privacy</a></li>
       </ul>
     </nav>
   </header>
 
   <main id="main-content" class="site-main" role="main">
     <section class="hero" aria-labelledby="about-hero-title" id="about-hero">
+      <div class="hero__decor" aria-hidden="true"></div>
       <h1 id="about-hero-title">About Example AI Agency</h1>
       <p class="lede">We explore practical, responsible AI product patterns?combining design craft with engineering rigor to prototype meaningful experiences.</p>
       <p class="muted">This is a minimal static prototype site intended to demonstrate accessible, responsive patterns for a small agency workflow.</p>
 
       <!-- Promo calling attention to the Demo page -->
       <div class="promo" role="region" aria-label="Demo preview">
-        <div style="flex:1">
-          <div style="font-weight:700">See our interactive demos</div>
+        <div class="promo-text" style="flex:1">
+          <div class="promo-eyebrow">See our interactive demos</div>
           <div style="font-size:.95rem; color:var(--muted)">Try two short prototypes that illustrate our approach to AI UX and product experimentation.</div>
         </div>
         <div>
@@ -158,11 +165,12 @@
       <article class="card" role="article" aria-labelledby="what-we-do">
         <h2 id="what-we-do">What we do</h2>
         <ul>
-          <li>AI strategy & product discovery</li>
-          <li>Design systems and interaction design</li>
-          <li>Prototype engineering and data tooling</li>
+          <li>(Example) AI strategy & product discovery</li>
+          <li>(Example) Design systems and interaction design</li>
+          <li>(Example) Prototype engineering and data tooling</li>
         </ul>
         <p class="muted">We favor small experiments that demonstrate impact quickly and translate to production-ready patterns.</p>
+        <p style="margin-top:.5rem;"><a href="what-we-do.html" class="nav-link" aria-label="Learn more about what we do">Explore our services ?</a></p>
       </article>
 
       <aside class="card" role="complementary" aria-labelledby="our-values">
@@ -186,10 +194,13 @@
 
   <footer class="site-footer" role="contentinfo">
     <nav aria-label="Footer navigation">
-      <ul style="display:flex; gap:1rem; list-style:none; margin:0; padding:0;">
+      <ul style="display:flex; gap:1rem; list-style:none; margin:0; padding:0; align-items:center;">
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="what-we-do.html" class="nav-link">What we do</a></li>
         <li><a href="#contact" class="nav-link">Contact</a></li>
+        <li><a href="privacy.html" class="nav-link" aria-label="Privacy Policy">Privacy</a></li>
+        <li><a href="terms.html" class="nav-link" aria-label="Terms of Use">Terms</a></li>
       </ul>
     </nav>
     <div style="text-align:right;">
@@ -206,7 +217,7 @@
 
       // Basic keyboard friendly skip-link focus polyfill for older browsers
       var skip = document.querySelector('.skip-link');
-      if(skip){
+      if(skip && skip.addEventListener){
         skip.addEventListener('click', function(e){
           var target = document.getElementById('main-content');
           if(target){
@@ -235,11 +246,12 @@
           var navLinks = primaryNav ? primaryNav.querySelectorAll('a') : document.querySelectorAll('[data-js="nav-link"], .nav-link');
 
           // Toggle mobile nav open state, aria-expanded and body class for simple styling hooks
-          if(navToggle && primaryNav){
+          if(navToggle && primaryNav && navToggle.addEventListener){
             navToggle.addEventListener('click', function onToggle(){
               var isOpen = primaryNav.getAttribute('data-open') === 'true';
               primaryNav.setAttribute('data-open', String(!isOpen));
-              primaryNav.setAttribute('aria-hidden', String(isOpen)); // when open -> aria-hidden=false
+              // When open -> aria-hidden should be false; when closed -> true (only on small screens)
+              primaryNav.setAttribute('aria-hidden', String(isOpen));
               navToggle.setAttribute('aria-expanded', String(!isOpen));
               if(!isOpen){
                 document.body.classList.add('nav-open');
@@ -260,6 +272,7 @@
           // Close nav on link activation (common mobile behavior)
           if(primaryNav && navLinks && navLinks.length){
             Array.prototype.forEach.call(navLinks, function(link){
+              if (!link.addEventListener) return;
               link.addEventListener('click', function(){
                 try {
                   if(primaryNav.getAttribute('data-open') === 'true'){
@@ -279,7 +292,7 @@
           var foundExistingCurrent = false;
           if(navLinks && navLinks.length){
             Array.prototype.forEach.call(navLinks, function(link){
-              if(link.hasAttribute && link.hasAttribute('aria-current')){
+              if(link && link.hasAttribute && link.hasAttribute('aria-current')){
                 foundExistingCurrent = true;
               }
             });
@@ -299,7 +312,7 @@
                   }
                   return;
                 }
-                // Normal links: compare origin+path (ignore fragments)
+                // Normal links: compare full resolved href (origin + path), ignore fragments
                 var candidate = (link.href || '').split('#')[0];
                 if(candidate === currentHrefNoHash){
                   link.setAttribute('aria-current','page');
