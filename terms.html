@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Terms of Use for Example Site ? outlines permitted use, disclaimers, and user responsibilities." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.example.com/terms.html" />
+  <title>Terms of Use</title>
+
+  <!-- Preconnect & Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-level critical styles: polished hero + footer focus states (temporary, complements styles.css) -->
+  <style>
+    :root{
+      --brand-900:#081018;
+      --brand-700:#0f1724;
+      --accent:#6ee7b7;
+      --muted:#9aa6b2;
+      --card-bg:rgba(255,255,255,0.02);
+      --glass: rgba(255,255,255,0.03);
+      --focus:#ffd54f;
+      --footer-bg:#071226;
+      --footer-link:#ffffff;
+    }
+
+    /* Basic page resets for this document to ensure consistent rendering */
+    html,body{height:100%;}
+    body{
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:#e6eef6;
+      background:linear-gradient(180deg,var(--brand-900),var(--brand-700));
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      margin:0;
+    }
+
+    /* Container layout shared with site (keeps existing .container) */
+    .container{max-width:1100px;margin:0 auto;padding:1.25rem;box-sizing:border-box;}
+
+    /* Header */
+    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0.5rem 0;}
+    .brand{display:flex;align-items:center;gap:.75rem;color:var(--accent);text-decoration:none;}
+    .brand-logo{display:block;flex:0 0 auto;}
+    .brand-name{font-weight:700;font-size:1.05rem;color:#fff;letter-spacing:0.2px;}
+
+    .site-nav .nav-list{display:flex;gap:0.75rem;padding:0;margin:0;list-style:none;}
+    .site-nav a{color:#cfe7ff;text-decoration:none;padding:0.45rem 0.6rem;border-radius:6px;font-weight:600;transition:all .15s ease;}
+    .site-nav a:hover{background:rgba(255,255,255,0.03);color:#fff;transform:translateY(-1px);}
+    .site-nav a:focus{outline:3px solid var(--focus);outline-offset:3px;box-shadow:0 6px 20px rgba(0,0,0,0.35);}
+
+    /* Hero */
+    .hero{margin:1.25rem 0;padding:2rem;border-radius:12px;background:
+      linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      box-shadow: 0 6px 30px rgba(2,6,23,0.6);display:flex;align-items:center;gap:1.25rem;}
+    .hero-inner{flex:1;}
+    .hero-title{margin:0 0 .25rem 0;font-size:1.9rem;line-height:1.06;color:#fff;}
+    .hero-sub{margin:0;color:var(--muted);font-size:1rem;}
+
+    /* Decorative accent on hero */
+    .hero-graphic{width:120px;height:120px;flex:0 0 120px;border-radius:12px;background:
+      linear-gradient(135deg,#0ea5a9,#7c3aed);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -6px 20px rgba(0,0,0,0.25);}
+
+    .hero-graphic svg{width:64px;height:64px;display:block;fill:white;opacity:.95;}
+
+    /* Content sections and cards */
+    .section{margin-top:1.25rem;}
+    .section-title{margin:0 0 .5rem 0;color:#eaf6ff;font-size:1.125rem;}
+    .lead{color:var(--muted);margin:0 0 1rem 0;}
+    .card{background:var(--card-bg);padding:1rem;border-radius:10px;margin-bottom:.9rem;border:1px solid rgba(255,255,255,0.03);}
+    .card-title{margin:0 0 .5rem 0;color:#fff;font-size:1rem;}
+    .terms-actions{display:flex;gap:.75rem;margin-top:1rem;align-items:center;}
+    .btn{display:inline-block;padding:.6rem .9rem;border-radius:8px;text-decoration:none;font-weight:600;border:0;cursor:pointer;}
+    .btn-primary{background:linear-gradient(90deg,#3b82f6,#06b6d4);color:white;box-shadow:0 6px 18px rgba(12,36,80,0.45);}
+    .btn-link{background:transparent;color:var(--accent);border:1px solid rgba(110,231,183,0.12);}
+
+    /* Breadcrumb */
+    .breadcrumb{margin-bottom:1rem;}
+    .breadcrumb ol{list-style:none;padding:0;display:flex;gap:.5rem;color:var(--muted);margin:0;font-size:.95rem;}
+    .breadcrumb a{color:#cfe7ff;text-decoration:none;}
+    .breadcrumb a:focus{outline:3px solid var(--focus);outline-offset:3px}
+
+    /* Footer */
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;background:transparent;}
+    .footer{background:linear-gradient(0deg,var(--footer-bg),rgba(7,18,38,0.8));padding:1.25rem 0;border-top:1px solid rgba(255,255,255,0.03);margin-top:2rem;}
+    .footer-links{display:flex;align-items:center;gap:0.5rem;padding:0;margin:0;list-style:none;}
+    .footer-link{color:var(--footer-link);text-decoration:none;padding:.45rem .6rem;border-radius:6px;font-weight:600;background:transparent;transition:all .12s ease;}
+    .footer-link:hover{background:rgba(255,255,255,0.03);text-decoration:underline;}
+    .footer-divider{color:rgba(255,255,255,0.12);padding:0 .25rem;}
+    .footer-copy{color:var(--muted);margin:0;font-size:.95rem;}
+
+    /* Focus states (strong, high contrast) */
+    a:focus,button:focus{outline:3px solid var(--focus);outline-offset:3px;box-shadow:0 6px 20px rgba(0,0,0,0.45);}
+
+    /* Small screens */
+    @media (max-width:700px){
+      .hero{flex-direction:column;align-items:flex-start;}
+      .hero-graphic{width:88px;height:88px;flex:0 0 88px;}
+      .header-inner{flex-direction:column;align-items:flex-start;}
+      .site-nav .nav-list{flex-wrap:wrap;}
+      .footer-inner{flex-direction:column;align-items:flex-start;}
+    }
+
+    /* Visually hidden helper if styles.css doesn't include one */
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px;}
+  </style>
+
+  <meta name="theme-color" content="#0a0a0a" />
+</head>
+<body id="terms-page" data-page="terms">
+
+  <!-- Skip link for keyboard users -->
+  <a class="skip-link" href="#main-content" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" onfocus="this.style.left='1rem';this.style.top='1rem';this.style.width='auto';this.style.height='auto';this.style.backgroundColor='white';this.style.color='#0b2447';this.style.padding='.5rem .75rem';this.style.borderRadius='6px';">Skip to main content</a>
+
+  <header class="site-header" role="banner" aria-labelledby="site-title">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Example Site homepage" data-nav-link data-allow-navigation="true">
+        <!-- Inline minimal logo to avoid missing assets and improve visual polish -->
+        <svg class="brand-logo" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true" focusable="false" role="img">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#06b6d4"/>
+              <stop offset="1" stop-color="#3b82f6"/>
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="10" fill="url(#g1)"/>
+          <g transform="translate(9,9)" fill="#fff" opacity="0.95">
+            <path d="M6 0h3v20H6zM0 6h20v3H0z" />
+          </g>
+        </svg>
+        <span id="site-title" class="brand-name">Example Site</span>
+      </a>
+
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="index.html" data-nav-link data-allow-navigation="true">Home</a></li>
+          <li class="nav-item"><a href="about.html" data-nav-link data-allow-navigation="true">About</a></li>
+          <li class="nav-item"><a href="demo.html" data-nav-link data-allow-navigation="true">Demo</a></li>
+          <li class="nav-item"><a href="what-we-do.html" data-nav-link data-allow-navigation="true">What we do</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="site-main container" role="main" tabindex="-1">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="index.html" data-nav-link data-allow-navigation="true">Home</a></li>
+        <li aria-current="page">Terms of Use</li>
+      </ol>
+    </nav>
+
+    <section id="terms-hero" class="hero" aria-labelledby="terms-heading" aria-describedby="terms-sub">
+      <div class="hero-inner">
+        <h1 id="terms-heading" class="hero-title">Terms of Use</h1>
+        <p id="terms-sub" class="hero-sub">These Terms govern your access to and use of Example Site. They explain what you can expect from us and what we expect from you.</p>
+
+        <p class="lead" style="margin-top:.75rem;color:var(--muted);">Short summary: be respectful, don't misuse the site, and understand content is provided as-is. For details, read the sections below.</p>
+      </div>
+
+      <div class="hero-graphic" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M12 2a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z" />
+        </svg>
+      </div>
+    </section>
+
+    <nav aria-label="On-page table of contents" class="section" style="margin-top:.5rem;">
+      <div class="card" role="navigation" aria-label="Table of contents">
+        <strong style="display:block;margin-bottom:.5rem;color:#dff5ff;">On this page</strong>
+        <ul style="margin:0;padding:0 0 0 1rem;color:var(--muted);">
+          <li><a href="#overview" data-nav-link>Overview</a></li>
+          <li><a href="#permitted-use" data-nav-link>Permitted Use</a></li>
+          <li><a href="#content-ip" data-nav-link>Content & IP</a></li>
+          <li><a href="#disclaimers" data-nav-link>Disclaimers & Liability</a></li>
+          <li><a href="#termination" data-nav-link>Termination</a></li>
+          <li><a href="#changes" data-nav-link>Changes to Terms</a></li>
+          <li><a href="#contact" data-nav-link>Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section id="terms-overview" class="content section terms-overview" role="region" aria-labelledby="overview-heading">
+      <h2 id="overview-heading" class="section-title">Overview</h2>
+      <p id="overview" class="lead">By accessing or using Example Site, you agree to these Terms of Use. If you do not agree with any part of these terms, please do not use the website or our services.</p>
+
+      <article id="permitted-use" class="card" aria-labelledby="permitted-heading">
+        <h3 id="permitted-heading" class="card-title">Permitted Use</h3>
+        <p>You may use the site and its content for personal, informational, and non-commercial purposes unless we explicitly state otherwise. You agree not to:</p>
+        <ul style="margin-top:.5rem;color:var(--muted);">
+          <li>Attempt to breach, probe, or circumvent site security;</li>
+          <li>Use the site to transmit unlawful or harmful content;</li>
+          <li>Republish or redistribute content that we have not licensed for public use.</li>
+        </ul>
+      </article>
+
+      <article id="content-ip" class="card" aria-labelledby="content-heading">
+        <h3 id="content-heading" class="card-title">Content & Intellectual Property</h3>
+        <p>All content on Example Site (including text, graphics, logos, icons, images, and software) is owned by Example Site or its licensors and protected by intellectual property laws.</p>
+        <p style="color:var(--muted);margin-top:.5rem;">Unless we state otherwise, permission to view or use content does not grant you any ownership rights.</p>
+      </article>
+
+      <article id="disclaimers" class="card" aria-labelledby="disclaimer-heading">
+        <h3 id="disclaimer-heading" class="card-title">Disclaimers & Liability</h3>
+        <p>Content is provided &ldquo;as is&rdquo; and &ldquo;as available&rdquo; without warranties of any kind. To the fullest extent permitted by law, Example Site disclaims all warranties, whether express or implied.</p>
+        <p style="color:var(--muted);margin-top:.5rem;">We are not responsible for indirect, incidental, special, consequential, or exemplary damages. Your sole remedy under these terms is to discontinue use of the service.</p>
+      </article>
+
+      <article id="termination" class="card" aria-labelledby="termination-heading">
+        <h3 id="termination-heading" class="card-title">Termination</h3>
+        <p>We may suspend or terminate access to all or part of the site at our discretion, with or without notice, for conduct that we believe violates these Terms or is harmful to other users.</p>
+      </article>
+
+      <article id="changes" class="card" aria-labelledby="changes-heading">
+        <h3 id="changes-heading" class="card-title">Changes to Terms</h3>
+        <p>We may update these Terms from time to time. Material changes will be posted on this page with an updated effective date. Continued use after changes constitutes acceptance of the updated Terms.</p>
+      </article>
+
+      <div class="terms-actions" role="group" aria-label="Terms actions">
+        <a class="btn btn-primary" href="index.html" data-nav-link data-allow-navigation="true" aria-label="Return to homepage">Return to Home</a>
+        <a class="btn btn-link" href="privacy.html" data-nav-link data-allow-navigation="true" aria-label="Read the privacy policy">View Privacy Policy</a>
+      </div>
+    </section>
+
+    <section id="contact" class="content section contact" role="region" aria-labelledby="contact-heading">
+      <h2 id="contact-heading" class="section-title">Contact</h2>
+      <p>If you have questions about these Terms, please reach out: <a href="mailto:legal@example.com" class="contact-link">legal@example.com</a>.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer footer" role="contentinfo" aria-labelledby="footer-heading">
+    <div class="container footer-inner">
+      <h2 id="footer-heading" class="visually-hidden">Footer</h2>
+
+      <nav class="footer-nav" role="navigation" aria-label="Footer">
+        <ul class="footer-links">
+          <li><a href="privacy.html" class="footer-link" data-nav-link data-allow-navigation="true">Privacy</a></li>
+          <li class="footer-divider" aria-hidden="true">|</li>
+          <li><a href="terms.html" class="footer-link" aria-current="page" data-nav-link data-allow-navigation="true">Terms</a></li>
+        </ul>
+      </nav>
+
+      <p class="footer-copy">? <span aria-hidden="true">2025</span> Example Site. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Application script -->
+  <script defer src="script.js"></script>
+
+  <!-- Small inline enhancement: ensure keyboard users land focus on main content after navigation -->
+  <script>
+    (function(){
+      try {
+        // If the browser focused an element with fragment, let it; otherwise, move focus to main for accessibility.
+        if (!window.location.hash) {
+          var main = document.getElementById('main-content');
+          if (main) {
+            // Delay to allow any other scripts to run
+            window.addEventListener('load', function(){ main.setAttribute('tabindex','-1'); main.focus({preventScroll:true}); }, {once:true});
+          }
+        }
+      } catch (e) {
+        // no-op ? defensive
+        console.warn('Accessibility helper error', e);
+      }
+    })();
+  </script>
+</body>
+</html>
