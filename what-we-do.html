@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>What We Do ? Example Company</title>
+  <meta name="description" content="What We Do ? Example Company. Overview of services and capabilities. Placeholder examples for content editors." />
+  <link rel="canonical" href="https://www.example.com/what-we-do.html" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Page-scoped additions for services grid, focus states, and JS-scoped hiding.
+       These rules are intentionally page-scoped so authors can extract them into styles.css later. -->
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --muted: #6b7280;
+      --text: #0f172a;
+      --accent-gradient: linear-gradient(135deg,#7c3aed 0%,#0ea5e9 100%);
+      --border: rgba(15,23,42,0.06);
+      --focus: #2563eb; /* vivid accessible focus color */
+      --radius: 12px;
+      --transition: 220ms cubic-bezier(.2,.9,.3,1);
+      --brand: #0b6efd;
+      --brand-dark: #084b9a;
+      --container-max: 1120px;
+      --glass: rgba(255,255,255,0.6);
+    }
+
+    /* Basic page layout and typography */
+    html,body {
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.45;
+      font-size: 16px;
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      z-index: 1000;
+    }
+    .skip-link:focus {
+      left: 16px;
+      top: 16px;
+      width: auto;
+      height: auto;
+      padding: 10px 14px;
+      background: #111827;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    /* Header */
+    .site-header {
+      background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.95));
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(15,23,42,0.04);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+
+    .site-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+    .brand-mark {
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(2,6,23,0.06);
+    }
+    .brand-text {
+      display: inline-block;
+    }
+
+    /* Navigation */
+    .site-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid rgba(15,23,42,0.04);
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 160ms ease, background var(--transition), border-color var(--transition);
+    }
+    .nav-toggle:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .nav-item { margin: 0; }
+    .nav-link {
+      display: inline-block;
+      padding: 8px 12px;
+      color: rgba(15,23,42,0.9);
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background var(--transition), color var(--transition), transform 140ms ease;
+    }
+    .nav-link:hover {
+      background: rgba(11,110,237,0.06);
+      color: var(--brand-dark);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+    .nav-link:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(11,110,237,0.12);
+    }
+    .nav-link.active, .nav-link[aria-current="page"] {
+      background: linear-gradient(90deg, rgba(124,58,237,0.06), rgba(14,165,233,0.04));
+      color: var(--brand-dark);
+    }
+
+    /* Mobile behavior: show toggle, hide list unless open */
+    @media (max-width: 840px) {
+      .nav-list {
+        position: absolute;
+        right: 20px;
+        top: 64px;
+        background: rgba(255,255,255,0.98);
+        border: 1px solid rgba(15,23,42,0.04);
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+        padding: 12px;
+        flex-direction: column;
+        gap: 6px;
+        transform-origin: top right;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px) scale(0.98);
+        transition: opacity 180ms ease, transform 160ms cubic-bezier(.2,.9,.3,1), visibility 180ms;
+        min-width: 160px;
+      }
+      .nav-list.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Main content */
+    .main-inner {
+      padding: 36px 0 60px;
+    }
+    .page-header {
+      margin-bottom: 18px;
+    }
+    .page-title {
+      margin: 0 0 6px 0;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+    }
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* Services: page-scoped styles (kept from earlier, preserved and slightly tuned) */
+
+    /* JS-scoped hiding: only collapse extended descriptions when JS is active.
+       When JS is disabled the extended content remains visible (graceful degradation). */
+    .js .service-desc--more {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(-6px);
+      transition: max-height var(--transition), opacity 180ms ease, transform 180ms ease;
+    }
+
+    /* Reveal when the service-card has the expanded class */
+    .service-card.is-expanded .service-desc--more {
+      max-height: 420px; /* generous limit for transition */
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Services grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .service-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+      box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+      position: relative;
+      overflow: visible;
+    }
+
+    /* Decorative accent stripe */
+    .service-card::before {
+      content: "";
+      position: absolute;
+      left: 1rem;
+      top: -6px;
+      height: 6px;
+      width: calc(100% - 2rem);
+      border-radius: 6px 6px 0 0;
+      background: transparent;
+      transition: background var(--transition);
+      pointer-events: none;
+    }
+
+    .service-card:hover::before,
+    .service-card:focus-within::before {
+      background: var(--accent-gradient);
+      opacity: 0.22;
+    }
+
+    .service-card:hover,
+    .service-card:focus-within {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(2,6,23,0.08);
+      border-color: rgba(15,23,42,0.08);
+    }
+
+    .service-card .service-card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .service-title {
+      margin: 0 0 0.375rem 0;
+      font-size: 1.125rem;
+      line-height: 1.2;
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .service-desc {
+      margin: 0 0 0.75rem 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .service-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-top: 0.4rem;
+    }
+
+    .service-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(180deg,#fff,#fbfbff);
+      border: 1px solid rgba(15,23,42,0.06);
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--text);
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color var(--transition);
+      box-shadow: 0 1px 0 rgba(2,6,23,0.02);
+    }
+
+    .service-toggle .toggle-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      transform-origin: center;
+      transition: transform var(--transition);
+      color: var(--brand);
+    }
+
+    .service-card.is-expanded .service-toggle .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .service-toggle:hover {
+      transform: translateY(-1px);
+      border-color: rgba(2,6,23,0.08);
+      box-shadow: 0 8px 20px rgba(2,6,23,0.04);
+    }
+
+    .service-toggle:focus {
+      outline: 3px solid rgba(37,99,235,0.18);
+      outline-offset: 3px;
+      border-color: var(--focus);
+    }
+
+    .service-cta {
+      text-decoration: none;
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.35rem 0.5rem;
+    }
+
+    .service-cta:hover,
+    .service-cta:focus {
+      text-decoration: underline;
+      outline: none;
+    }
+
+    .muted { color: var(--muted); }
+
+    /* Responsive breakpoints per spec:
+       <=640px single column, 641-960px two columns, >960px three columns */
+    @media (min-width: 641px) and (max-width: 960px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 961px) {
+      .services-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* Small utility */
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap; /* added line */
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #ffffff;
+      border-top: 1px solid rgba(15,23,42,0.04);
+      padding: 20px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .footer-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .footer-nav .footer-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .footer-nav a {
+      color: var(--brand-dark);
+      text-decoration: none;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background var(--transition), color var(--transition);
+    }
+    .footer-nav a:hover {
+      background: rgba(11,110,237,0.06);
+      color: var(--brand);
+    }
+    .footer-nav a:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(11,110,237,0.12);
+    }
+
+    /* Make footer links easy to target on touch */
+    .footer-nav a { min-height: 36px; display: inline-flex; align-items: center; }
+
+    /* Ensure adequate contrast for the brand link color on the light background */
+    @media (prefers-contrast: more) {
+      .footer-nav a { color: var(--brand-dark); }
+    }
+  </style>
+
+  <!-- SEO / Social -->
+  <meta property="og:title" content="What We Do ? Example Company" />
+  <meta property="og:description" content="Overview of services and capabilities. Placeholder examples for content editors." />
+  <meta property="og:url" content="https://www.example.com/what-we-do.html" />
+  <meta property="og:type" content="website" />
+</head>
+<body class="page page-what-we-do">
+  <!-- Skip link -->
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <!-- Header / Navigation (kept consistent across pages) -->
+  <header class="site-header" role="banner" id="site-header">
+    <div class="container header-inner">
+      <a class="site-brand" href="index.html" aria-label="Example Company Home">
+        <svg class="brand-mark" width="44" height="44" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#7c3aed"/>
+              <stop offset="1" stop-color="#0ea5e9"/>
+            </linearGradient>
+          </defs>
+          <rect width="100" height="100" rx="18" fill="url(#g1)"></rect>
+          <text x="50" y="60" font-family="Inter, sans-serif" font-size="52" fill="#ffffff" text-anchor="middle" aria-hidden="true">E</text>
+        </svg>
+        <span class="brand-text">Example Company</span>
+      </a>
+
+      <nav class="site-nav" role="navigation" aria-label="Main Navigation">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="primary-navigation" id="nav-toggle" aria-label="Toggle main navigation">
+          <span class="visually-hidden">Toggle navigation</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <ul class="nav-list" id="primary-navigation" role="menubar" aria-hidden="false">
+          <li class="nav-item" role="none"><a class="nav-link" role="menuitem" href="index.html">Home</a></li>
+          <li class="nav-item" role="none"><a class="nav-link" role="menuitem" href="about.html">About</a></li>
+          <li class="nav-item" role="none"><a class="nav-link" role="menuitem" href="demo.html">Demo</a></li>
+          <li class="nav-item" role="none"><a class="nav-link active" role="menuitem" href="what-we-do.html" aria-current="page">What we do</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="site-main" role="main">
+    <div class="container main-inner">
+      <header class="page-header">
+        <h1 class="page-title">What we do</h1>
+        <p class="lead">Services, capabilities, and examples of how we deliver value. All items below are placeholders marked <strong>(Example)</strong>.</p>
+      </header>
+
+      <section class="services" aria-labelledby="services-heading">
+        <h2 id="services-heading" class="services-heading visually-hidden">Services and Capabilities</h2>
+
+        <div id="services-grid" class="services-grid" role="list">
+          <!-- Service Card 1 -->
+          <article class="service-card" role="listitem" data-service-id="svc-1" aria-labelledby="svc1-title">
+            <div class="service-card-inner">
+              <h3 id="svc1-title" class="service-title">(Example) Strategic Consulting</h3>
+              <p class="service-desc service-desc--short">(Example) Short description: expert guidance to align strategy and execution.</p>
+
+              <p id="svc1-more" class="service-desc service-desc--more" aria-hidden="false">
+                (Example) Extended description: Our strategic consulting offering includes market analysis, organizational alignment, and roadmapping. Replace this placeholder text with real content.
+              </p>
+
+              <div class="service-actions">
+                <button
+                  class="service-toggle"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="svc1-more"
+                  data-toggle="service"
+                  data-target="svc-1"
+                  aria-label="Show details for Strategic Consulting (Example)"
+                >
+                  <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M6 9l6 6 6-6" stroke="#0b6efd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="toggle-label">Show details</span>
+                </button>
+                <a class="service-cta" href="contact.html" aria-label="Contact about Strategic Consulting (Example)">Contact us (Example)</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Service Card 2 -->
+          <article class="service-card" role="listitem" data-service-id="svc-2" aria-labelledby="svc2-title">
+            <div class="service-card-inner">
+              <h3 id="svc2-title" class="service-title">(Example) Product Design</h3>
+              <p class="service-desc service-desc--short">(Example) Short description: user-centered design to craft delightful products.</p>
+
+              <p id="svc2-more" class="service-desc service-desc--more" aria-hidden="false">
+                (Example) Extended description: We combine UX research, interaction design, and prototyping to validate concepts and deliver beautiful experiences. Replace this placeholder text with real content.
+              </p>
+
+              <div class="service-actions">
+                <button
+                  class="service-toggle"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="svc2-more"
+                  data-toggle="service"
+                  data-target="svc-2"
+                  aria-label="Show details for Product Design (Example)"
+                >
+                  <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M6 9l6 6 6-6" stroke="#0b6efd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="toggle-label">Show details</span>
+                </button>
+                <a class="service-cta" href="contact.html" aria-label="Contact about Product Design (Example)">Contact us (Example)</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Service Card 3 -->
+          <article class="service-card" role="listitem" data-service-id="svc-3" aria-labelledby="svc3-title">
+            <div class="service-card-inner">
+              <h3 id="svc3-title" class="service-title">(Example) Engineering & Development</h3>
+              <p class="service-desc service-desc--short">(Example) Short description: scalable engineering to build robust systems.</p>
+
+              <p id="svc3-more" class="service-desc service-desc--more" aria-hidden="false">
+                (Example) Extended description: Our engineering teams ship production-ready software using modern practices and tooling. Replace this placeholder text with real content.
+              </p>
+
+              <div class="service-actions">
+                <button
+                  class="service-toggle"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="svc3-more"
+                  data-toggle="service"
+                  data-target="svc-3"
+                  aria-label="Show details for Engineering & Development (Example)"
+                >
+                  <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M6 9l6 6 6-6" stroke="#0b6efd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="toggle-label">Show details</span>
+                </button>
+                <a class="service-cta" href="contact.html" aria-label="Contact about Engineering & Development (Example)">Contact us (Example)</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Service Card 4 -->
+          <article class="service-card" role="listitem" data-service-id="svc-4" aria-labelledby="svc4-title">
+            <div class="service-card-inner">
+              <h3 id="svc4-title" class="service-title">(Example) Data & Analytics</h3>
+              <p class="service-desc service-desc--short">(Example) Short description: unlock insights with analytics and data engineering.</p>
+
+              <p id="svc4-more" class="service-desc service-desc--more" aria-hidden="false">
+                (Example) Extended description: We deliver data pipelines, dashboards, and ML experiments to drive decision-making. Replace this placeholder text with real content.
+              </p>
+
+              <div class="service-actions">
+                <button
+                  class="service-toggle"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="svc4-more"
+                  data-toggle="service"
+                  data-target="svc-4"
+                  aria-label="Show details for Data & Analytics (Example)"
+                >
+                  <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M6 9l6 6 6-6" stroke="#0b6efd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="toggle-label">Show details</span>
+                </button>
+                <a class="service-cta" href="contact.html" aria-label="Contact about Data & Analytics (Example)">Contact us (Example)</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Service Card 5 -->
+          <article class="service-card" role="listitem" data-service-id="svc-5" aria-labelledby="svc5-title">
+            <div class="service-card-inner">
+              <h3 id="svc5-title" class="service-title">(Example) Marketing & Growth</h3>
+              <p class="service-desc service-desc--short">(Example) Short description: growth strategies to reach your audience effectively.</p>
+
+              <p id="svc5-more" class="service-desc service-desc--more" aria-hidden="false">
+                (Example) Extended description: Campaign strategy, performance marketing, and lifecycle initiatives that scale. Replace this placeholder text with real content.
+              </p>
+
+              <div class="service-actions">
+                <button
+                  class="service-toggle"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="svc5-more"
+                  data-toggle="service"
+                  data-target="svc-5"
+                  aria-label="Show details for Marketing & Growth (Example)"
+                >
+                  <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M6 9l6 6 6-6" stroke="#0b6efd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="toggle-label">Show details</span>
+                </button>
+                <a class="service-cta" href="contact.html" aria-label="Contact about Marketing & Growth (Example)">Contact us (Example)</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Service Card 6 -->
+          <article class="service-card" role="listitem" data-service-id="svc-6" aria-labelledby="svc6-title">
+            <div class="service-card-inner">
+              <h3 id="svc6-title" class="service-title">(Example) Support & Operations</h3>
+              <p class="service-desc service-desc--short">(Example) Short description: reliable support and operations for your services.</p>
+
+              <p id="svc6-more" class="service-desc service-desc--more" aria-hidden="false">
+                (Example) Extended description: Managed services, SLAs, and operational excellence to keep systems healthy. Replace this placeholder text with real content.
+              </p>
+
+              <div class="service-actions">
+                <button
+                  class="service-toggle"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="svc6-more"
+                  data-toggle="service"
+                  data-target="svc-6"
+                  aria-label="Show details for Support & Operations (Example)"
+                >
+                  <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M6 9l6 6 6-6" stroke="#0b6efd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="toggle-label">Show details</span>
+                </button>
+                <a class="service-cta" href="contact.html" aria-label="Contact about Support & Operations (Example)">Contact us (Example)</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <aside class="page-note" aria-label="Page note">
+        <p class="muted">(Example) This page uses placeholder service cards. Replace titles and descriptions as needed.</p>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p class="footer-meta">? <span id="year"></span> Example Company. All rights reserved.</p>
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <ul class="footer-list">
+          <li><a href="privacy.html" data-allow-nav="true">Privacy</a></li>
+          <li><a href="terms.html" data-allow-nav="true">Terms</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Feature-detected script loaded deferred -->
+  <script defer src="script.js"></script>
+  <script>
+    // Small inline helpers to keep footer year and minimal nav toggle behaviour working without relying on external JS modifications.
+    (function () {
+      try {
+        // Footer year
+        var currentYear = new Date().getFullYear();
+        var yearEl = document.getElementById('year');
+        if (yearEl) yearEl.textContent = currentYear;
+
+        // Simple nav toggle for small screens (progressive enhancement)
+        var navToggle = document.getElementById('nav-toggle');
+        var primaryNav = document.getElementById('primary-navigation');
+        if (navToggle && primaryNav && 'addEventListener' in window) {
+          function setNavState(isOpen) {
+            navToggle.setAttribute('aria-expanded', String(!!isOpen));
+            primaryNav.classList.toggle('is-open', !!isOpen);
+            primaryNav.setAttribute('aria-hidden', String(!isOpen));
+          }
+
+          // Click toggles
+          navToggle.addEventListener('click', function (e) {
+            var expanded = navToggle.getAttribute('aria-expanded') === 'true';
+            setNavState(!expanded);
+          });
+
+          // Keyboard accessible toggle (Enter / Space)
+          navToggle.addEventListener('keydown', function (e) {
+            var key = e.key || e.keyCode;
+            if (key === ' ' || key === 'Spacebar' || key === 32 || key === 'Enter' || key === 13) {
+              e.preventDefault();
+              var expanded = navToggle.getAttribute('aria-expanded') === 'true';
+              setNavState(!expanded);
+            }
+          });
+
+          // Close when clicking outside on mobile
+          document.addEventListener('click', function (e) {
+            if (!primaryNav.classList.contains('is-open')) return;
+            if (e.target.closest('.site-nav')) return;
+            setNavState(false);
+          });
+
+          // Close on Escape
+          document.addEventListener('keydown', function (e) {
+            var key = e.key || e.keyCode;
+            if (key === 'Escape' || key === 'Esc' || key === 27) {
+              setNavState(false);
+            }
+          });
+        }
+      } catch (err) {
+        // defensive noop
+      }
+    })();
+  </script>
+
+  <!-- Page-scoped script: feature-detected enhancement for service toggles.
+       Behavior:
+       - Feature detection guard
+       - On DOMContentLoaded: add 'js' class to document.documentElement
+       - Initialize toggles to aria-expanded="false" and set controlled panels aria-hidden="true"
+       - Attach click and keydown handlers (Enter / Space) to toggles
+       - Make each article keyboard-focusable and allow clicking/pressing Enter/Space on the card (excluding links/buttons) to toggle
+       - Use data-target to find the matching article via data-service-id (reliable mapping)
+  -->
+  <script>
+    (function () {
+      // Feature-detection: bail out early on very old browsers
+      if (!('addEventListener' in window && 'classList' in document.documentElement && document.querySelector)) {
+        return;
+      }
+
+      function safeText(el) {
+        return (el && el.textContent) ? el.textContent.trim() : '';
+      }
+
+      function initServiceToggles() {
+        var docEl = document.documentElement;
+        // Add marker class so CSS can scope JS-only hiding rules (no-js -> extended content visible)
+        docEl.classList.add('js');
+
+        var toggleButtons = Array.prototype.slice.call(document.querySelectorAll('.service-toggle'));
+        if (!toggleButtons.length) return;
+
+        toggleButtons.forEach(function (btn) {
+          try {
+            var targetId = btn.getAttribute('data-target');
+            var article = document.querySelector('.service-card[data-service-id="' + targetId + '"]') || btn.closest('.service-card');
+            var controlsId = btn.getAttribute('aria-controls');
+            var controlled = controlsId ? document.getElementById(controlsId) : (article ? article.querySelector('.service-desc--more') : null);
+
+            // If we can find the service title, use it for accessible labels
+            var serviceTitle = article ? safeText(article.querySelector('.service-title')) : '';
+
+            // Set initial collapsed state for JS-enabled experience
+            btn.setAttribute('aria-expanded', 'false');
+            if (controlled) controlled.setAttribute('aria-hidden', 'true');
+
+            if (article) {
+              // Ensure articles are keyboard-focusable so Enter/Space works on them as well
+              if (!article.hasAttribute('tabindex')) {
+                article.setAttribute('tabindex', '0');
+              }
+              article.classList.remove('is-expanded');
+            }
+
+            // Helper to update labels and aria attributes consistently
+            function updateState(isExpanded) {
+              btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+              if (controlled) controlled.setAttribute('aria-hidden', isExpanded ? 'false' : 'true');
+              if (article) article.classList.toggle('is-expanded', isExpanded);
+
+              // Update visible label and aria-label on the button
+              var labelEl = btn.querySelector('.toggle-label');
+              if (labelEl) {
+                labelEl.textContent = isExpanded ? 'Hide details' : 'Show details';
+              }
+              var ariaName = serviceTitle || 'service';
+              btn.setAttribute('aria-label', (isExpanded ? 'Hide details for ' : 'Show details for ') + ariaName + ' (Example)');
+            }
+
+            // Toggle function
+            function toggleHandler(ev) {
+              // If event provided and target is an interactive control (link/button inside), ignore
+              if (ev && ev.type === 'click') {
+                var interactive = ev.target.closest('a,button');
+                if (interactive && interactive !== btn) return;
+              }
+
+              var currentlyExpanded = btn.getAttribute('aria-expanded') === 'true';
+              updateState(!currentlyExpanded);
+            }
+
+            // Click handler on the button
+            btn.addEventListener('click', function (e) {
+              try {
+                toggleHandler(e);
+              } catch (err) {
+                // noop
+              }
+            });
+
+            // Key handling for button: handle Space and Enter explicitly and prevent default where needed
+            btn.addEventListener('keydown', function (e) {
+              var key = e.key || e.keyCode;
+              if (key === ' ' || key === 'Spacebar' || key === 32 || key === 'Enter' || key === 13) {
+                e.preventDefault();
+                toggleHandler(e);
+              }
+            });
+
+            // Make the article toggleable by clicking on its body (but exclude clicks on interactive controls)
+            if (article) {
+              article.addEventListener('click', function (e) {
+                // Ignore clicks on controls inside the card
+                if (e.target.closest('a,button')) return;
+                toggleHandler(e);
+              });
+
+              article.addEventListener('keydown', function (e) {
+                var key = e.key || e.keyCode;
+                if (key === ' ' || key === 'Spacebar' || key === 32 || key === 'Enter' || key === 13) {
+                  // Prevent page scroll on Space
+                  e.preventDefault();
+                  // Ignore if focus is within an interactive child
+                  if (document.activeElement && (document.activeElement.tagName === 'A' || document.activeElement.tagName === 'BUTTON')) {
+                    return;
+                  }
+                  toggleHandler(e);
+                }
+              });
+            }
+
+            // Initialize button label based on collapsed state
+            updateState(false);
+          } catch (err) {
+            // Defensive: ignore failures for individual toggles
+            // (do not break initialization of other toggles)
+          }
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initServiceToggles);
+      } else {
+        initServiceToggles();
+      }
+    })();
+  </script>
+</body>
+</html>
