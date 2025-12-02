@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Contact the AI Agency ? placeholder contact page. Contact page placeholder ? no functionality yet." />
+  <title>Contact Us ? AI Agency</title>
+  <link rel="canonical" href="contact.html" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Main stylesheet (site-wide) -->
+  <link rel="stylesheet" href="styles.css">
+  <meta name="page" content="contact">
+
+  <!-- Critical page styles for the Contact placeholder.
+       These are intentionally page-scoped, small, and focused on visuals & accessibility.
+       Global tokens are expected in styles.css; these rules complement them. -->
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#f8fafc;
+      --muted:#6b7280;
+      --accent:#0ea5a4;
+      --text:#0f172a;
+      --radius:12px;
+      --shadow:0 8px 24px rgba(15,23,42,0.06);
+      --glass: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.6));
+      --container-max:1100px;
+    }
+
+    /* Page baseline */
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:linear-gradient(180deg, #fbfdff, #ffffff);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      font-size:16px;
+    }
+
+    /* Skip link (visible on focus) */
+    .skip-link, .skip-to-content {
+      position:fixed;
+      left:1rem;
+      top:1rem;
+      background:#0f172a;
+      color:#fff;
+      padding:.5rem .75rem;
+      border-radius:8px;
+      z-index:9999;
+      transform:translateY(-120%);
+      transition:transform .18s ease;
+      text-decoration:none;
+      font-size:.95rem;
+      box-shadow:0 6px 18px rgba(15,23,42,0.12);
+    }
+    .skip-link:focus, .skip-to-content:focus { transform:translateY(0); outline:3px solid rgba(14,165,164,0.18); }
+
+    /* Header */
+    #site-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      padding:1.25rem 1.25rem;
+      max-width:var(--container-max);
+      margin:0 auto;
+      background:transparent;
+      position:relative;
+    }
+
+    .site-brand{
+      display:flex;
+      gap:.9rem;
+      align-items:center;
+      text-decoration:none;
+      color:var(--text);
+    }
+    .site-brand .logo{
+      width:46px;
+      height:46px;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#06b6d4);
+      box-shadow:0 6px 18px rgba(6,182,212,0.12), inset 0 -6px 12px rgba(255,255,255,0.06);
+      display:inline-block;
+    }
+    .site-brand div{line-height:1}
+    .site-brand span{display:block}
+    .site-brand .mutedTag{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+    /* Nav */
+    #main-nav ul{
+      list-style:none;
+      margin:0;
+      padding:0;
+      display:flex;
+      gap:1rem;
+      align-items:center;
+    }
+    #main-nav a{
+      text-decoration:none;
+      color:var(--muted);
+      padding:.5rem .6rem;
+      border-radius:8px;
+      font-weight:600;
+      transition:all .15s ease;
+      font-size:.95rem;
+    }
+    #main-nav a:hover, #main-nav a:focus{
+      color:var(--text);
+      background:rgba(14,165,164,0.06);
+      transform:translateY(-2px);
+      outline:none;
+    }
+    #main-nav a[aria-current="page"]{
+      color:var(--accent);
+      box-shadow:inset 0 -2px 0 var(--accent);
+      transform:none;
+    }
+
+    /* Main layout */
+    main[role="main"]{
+      max-width:var(--container-max);
+      margin:2.25rem auto;
+      padding:0 1.25rem 3.5rem;
+    }
+
+    .contact-page{
+      background:transparent;
+      border-radius:14px;
+      padding:1.25rem;
+      animation:fadeUp .36s ease both;
+    }
+
+    @keyframes fadeUp {
+      from{opacity:0; transform:translateY(6px)}
+      to{opacity:1; transform:none}
+    }
+
+    .contact-hero{
+      display:flex;
+      align-items:flex-start;
+      gap:1.25rem;
+      margin-bottom:1rem;
+      padding:1rem;
+      border-radius:12px;
+      background:linear-gradient(180deg, rgba(14,165,164,0.06), rgba(6,182,212,0.02));
+      box-shadow:var(--shadow);
+    }
+    .contact-hero h1{
+      margin:0;
+      font-size:clamp(1.5rem, 2.6vw, 2rem);
+      letter-spacing:-0.01em;
+    }
+    .contact-hero p{
+      margin:.25rem 0 0;
+      color:var(--muted);
+      font-size:1rem;
+    }
+
+    /* Grid */
+    .contact-grid{
+      display:grid;
+      grid-template-columns:1fr 320px;
+      gap:1.25rem;
+      margin-top:1.25rem;
+    }
+
+    .contact-form-panel, .contact-info{
+      background:var(--panel);
+      border-radius:12px;
+      padding:1.15rem;
+      box-shadow:var(--shadow);
+    }
+
+    /* Form */
+    .contact-form .form-field{
+      display:flex;
+      flex-direction:column;
+      margin-bottom:.9rem;
+    }
+    .contact-form label{
+      font-size:.9rem;
+      margin-bottom:.35rem;
+      color:var(--muted);
+      font-weight:600;
+    }
+    .contact-form input[type="text"],
+    .contact-form input[type="email"],
+    .contact-form textarea{
+      border:1px solid rgba(15,23,42,0.06);
+      background: #fff;
+      padding:.75rem .85rem;
+      border-radius:10px;
+      font-size:1rem;
+      color:var(--text);
+      transition:box-shadow .12s ease,transform .08s ease;
+      box-shadow:0 4px 14px rgba(2,6,23,0.03);
+      resize:vertical;
+      min-height:44px;
+    }
+
+    .contact-form input:focus, .contact-form textarea:focus{
+      outline:none;
+      box-shadow:0 8px 30px rgba(14,165,164,0.08);
+      transform:translateY(-2px);
+      border-color:rgba(14,165,164,0.14);
+    }
+
+    /* Disabled appearance for placeholder form ? clear, muted, and obvious */
+    .contact-form input[disabled],
+    .contact-form textarea[disabled]{
+      background:linear-gradient(180deg,#fbfdff,#ffffff);
+      opacity:.7;
+      color:var(--muted);
+      cursor:not-allowed;
+      box-shadow:none;
+      border:1px solid rgba(15,23,42,0.04);
+    }
+    .contact-form button.btn{
+      display:inline-flex;
+      align-items:center;
+      gap:.6rem;
+      padding:.6rem .85rem;
+      font-weight:700;
+      border-radius:10px;
+      border:0;
+      cursor:pointer;
+      background:linear-gradient(90deg,var(--accent),#06b6d4);
+      color:#fff;
+      box-shadow:0 8px 22px rgba(6,182,212,0.14);
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .contact-form button.btn:active{ transform:translateY(1px) }
+    .contact-form button[disabled].btn{
+      background:linear-gradient(90deg,#e9eef0,#f7fbfb);
+      color:var(--muted);
+      box-shadow:none;
+      border:1px solid rgba(15,23,42,0.04);
+      cursor:not-allowed;
+      opacity:.85;
+    }
+
+    .form-actions{ display:flex; gap:.6rem; align-items:center; margin-top:.6rem }
+
+    .contact-note{
+      margin-top:.9rem;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    /* Contact info aside */
+    .contact-info h2{
+      margin:0 0 .5rem 0;
+      font-size:1.05rem;
+    }
+    .contact-info address{
+      font-style:normal;
+      color:var(--text);
+      line-height:1.45;
+      margin-bottom:.6rem;
+      font-weight:600;
+    }
+    .contact-info a{ color:var(--accent); text-decoration:none; font-weight:600 }
+    .contact-info a:hover, .contact-info a:focus{ text-decoration:underline; outline:none }
+
+    /* Footer */
+    #site-footer{
+      max-width:var(--container-max);
+      margin:2.5rem auto 3.5rem;
+      padding:0 1.25rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:1rem;
+      flex-wrap:wrap;
+    }
+    #site-footer small{ color:var(--muted); font-weight:600 }
+
+    #site-footer nav a{
+      color:var(--muted);
+      margin-left:.9rem;
+      text-decoration:none;
+      font-weight:600;
+      font-size:.95rem;
+    }
+    #site-footer nav a:hover{ color:var(--text) }
+
+    /* Utility */
+    .visually-hidden{
+      position:absolute!important;
+      height:1px; width:1px;
+      overflow:hidden;
+      clip:rect(1px,1px,1px,1px);
+      white-space:nowrap;
+    }
+
+    /* Responsive */
+    @media (max-width:880px){
+      .contact-grid{ grid-template-columns:1fr; }
+      #main-nav ul{ gap:.5rem; }
+      .site-brand .logo{ width:40px; height:40px }
+      #site-header{ padding:1rem; }
+      main[role="main"]{ margin-top:1rem }
+    }
+
+  </style>
+</head>
+<body class="page-contact" data-page="contact">
+  <a class="skip-link skip-to-content" href="#main">Skip to main content</a>
+
+  <header id="site-header" role="banner" aria-label="Site header">
+    <a href="index.html" class="site-brand" aria-label="AI Agency home">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <span style="display:block;font-weight:700">AI Agency</span>
+        <span class="mutedTag" style="display:block;font-size:.8rem;margin-top:2px">Design &amp; ML</span>
+      </div>
+    </a>
+
+    <nav id="main-nav" role="navigation" aria-label="Main navigation">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="what-we-do.html">What we do</a></li>
+        <li><a href="demo.html">Demo</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="contact.html" aria-current="page">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" role="main" tabindex="-1">
+    <article class="contact-page" id="contactPage" role="article" aria-labelledby="contact-heading" data-module="contact-page" data-page-section="contact">
+      <header class="contact-hero" role="region" aria-labelledby="contact-heading">
+        <div aria-hidden="true" style="width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--accent),#06b6d4);box-shadow:0 8px 24px rgba(6,182,212,0.12);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2v4" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 6.5l2.5 1" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17 6.5l-2.5 1" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7.5 10.5C8.8 13 10.8 14.5 12 14.5c1.2 0 3.2-1.5 4.5-4" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <h1 id="contact-heading">Contact Us</h1>
+          <p id="contact-subhead">Contact page placeholder ? no functionality yet</p>
+        </div>
+      </header>
+
+      <div class="contact-grid" role="region" aria-label="Contact content">
+        <!-- Left: Disabled placeholder contact form -->
+        <section class="contact-form-panel" aria-labelledby="form-heading">
+          <h2 id="form-heading" class="visually-hidden">Contact form (placeholder)</h2>
+
+          <!--
+            Intentionally static placeholder form.
+            All inputs & controls are disabled and marked aria-disabled="true".
+            script.js (site script) should guard against attaching active handlers by detecting disabled form fields.
+          -->
+          <form class="contact-form" id="contact-form" novalidate aria-describedby="contact-note" aria-disabled="true" data-contact-form data-placeholder-form>
+            <div class="form-field">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" placeholder="Your full name" disabled aria-disabled="true" autocomplete="name" />
+            </div>
+
+            <div class="form-field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" disabled aria-disabled="true" autocomplete="email" />
+            </div>
+
+            <div class="form-field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="6" placeholder="Write your message..." disabled aria-disabled="true"></textarea>
+            </div>
+
+            <div class="form-actions" role="group" aria-label="Form actions">
+              <button class="btn" type="submit" disabled aria-disabled="true">Send message</button>
+              <button class="btn secondary" type="button" disabled aria-disabled="true" style="background:transparent;color:var(--muted);box-shadow:none;border:1px solid rgba(15,23,42,0.04)">Clear</button>
+            </div>
+
+            <p id="contact-note" class="contact-note">This is a static placeholder page. The form is intentionally disabled ? no submissions are possible at this time.</p>
+          </form>
+        </section>
+
+        <!-- Right: Contact info block -->
+        <aside class="contact-info" role="complementary" aria-labelledby="info-heading">
+          <h2 id="info-heading">Contact information</h2>
+
+          <address>
+            AI Agency<br>
+            112 Innovation Drive<br>
+            San Francisco, CA 94107
+          </address>
+
+          <p style="margin-top:.5rem;">
+            Email:
+            <a href="mailto:hello@ai-agency.example" rel="nofollow">hello@ai-agency.example</a><br>
+            Phone:
+            <a href="tel:+14155551234" rel="nofollow">+1 (415) 555-1234</a>
+          </p>
+
+          <p style="margin-top:.65rem;color:var(--muted);font-size:.92rem">
+            Office hours: Mon?Fri, 9:00 AM ? 5:00 PM PST
+          </p>
+
+          <hr style="border:none;height:1px;background:linear-gradient(90deg, rgba(15,23,42,0.02), rgba(15,23,42,0.04));margin:1rem 0;border-radius:2px">
+
+          <p style="font-size:.9rem;color:var(--muted);margin:0">
+            Tip: This page is a visual placeholder. If you'd like to reach us, please use the provided email or phone number.
+          </p>
+        </aside>
+      </div>
+    </article>
+  </main>
+
+  <footer id="site-footer" role="contentinfo" aria-label="Site footer">
+    <div>
+      <small aria-hidden="false">? <span id="year"></span> AI Agency ? All rights reserved</small>
+    </div>
+
+    <nav aria-label="Footer navigation">
+      <a href="index.html">Home</a>
+      <a href="what-we-do.html">What we do</a>
+      <a href="demo.html">Demo</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="contact.html" aria-current="page">Contact</a>
+    </nav>
+  </footer>
+
+  <!-- Small inline helper to set the current year -->
+  <script>
+    (function(){
+      try{
+        var y = new Date().getFullYear();
+        var el = document.getElementById('year');
+        if(el) el.textContent = y;
+      }catch(e){
+        // no-op
+      }
+    })();
+  </script>
+
+  <!-- Main site script (deferred). The global script should avoid attaching active handlers to disabled placeholder forms.
+       The contact form intentionally includes disabled inputs and data-placeholder-form so guarded handlers won't run here. -->
+  <script defer src="script.js"></script>
+</body>
+</html>
