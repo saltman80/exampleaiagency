@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo ? Example Site</title>
+  <meta name="description" content="Interactive demo page showcasing two demo blocks with accessible controls and responsive layout." />
+  <link rel="canonical" href="/demo.html" />
+  <meta name="theme-color" content="#0f1724" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Page-scoped visual refinements and accessibility focus styles (keeps behavior intact if external styles missing) */
+    :root{
+      --bg:#071226;
+      --card:#0c1728;
+      --muted:#9aa6b2;
+      --accent:#6ee7b7;
+      --glass: rgba(255,255,255,0.03);
+      --focus-ring: 3px solid rgba(110,231,183,0.18);
+      --radius:12px;
+      --max-width:1100px;
+      --transition:200ms cubic-bezier(.2,.9,.3,1);
+      color-scheme: dark;
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#041022 0%, #05132a 60%), radial-gradient(800px 300px at 10% 10%, rgba(110,231,183,0.03), transparent 20%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      padding:24px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .container{
+      width:100%;
+      max-width:var(--max-width);
+      margin:0 auto;
+      padding:0 18px;
+      box-sizing:border-box;
+    }
+
+    /* Skip link */
+    .skip-link{
+      position:fixed;
+      left:12px;
+      top:12px;
+      background:var(--card);
+      color:var(--accent);
+      padding:8px 12px;
+      border-radius:8px;
+      z-index:9999;
+      transform:translateY(-120%);
+      transition:transform 180ms ease, opacity 180ms ease;
+      opacity:0;
+      text-decoration:none;
+      font-weight:600;
+      box-shadow: 0 4px 18px rgba(2,6,23,0.6);
+    }
+    .skip-link:focus, .skip-link:active { transform:none; opacity:1; outline: none; }
+
+    /* Header */
+    .site-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:18px 0 28px;
+    }
+    .logo{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      text-decoration:none;
+      color:inherit;
+    }
+    .logo__mark{
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),#4dd6ff 70%);
+      box-shadow:0 6px 24px rgba(16,24,40,0.6), inset 0 -6px 12px rgba(255,255,255,0.02);
+      display:inline-block;
+      flex:0 0 44px;
+    }
+    .site-title{
+      display:block;
+      font-weight:800;
+      font-size:1rem;
+      line-height:1;
+      letter-spacing: -0.01em;
+    }
+    .site-tagline{
+      display:block;
+      color:var(--muted);
+      font-size:0.82rem;
+      margin-top:2px;
+    }
+
+    /* Navigation */
+    #main-nav{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    #main-nav a{
+      color:var(--muted);
+      text-decoration:none;
+      padding:8px 10px;
+      border-radius:8px;
+      font-weight:600;
+      transition:color var(--transition), background var(--transition), transform var(--transition);
+      outline: none;
+    }
+    #main-nav a:hover{
+      color:#ffffff;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      transform:translateY(-2px) scale(1.01);
+    }
+    #main-nav a[aria-current="page"]{
+      color:#071724;
+      background:linear-gradient(90deg,var(--accent),#4dd6ff);
+      box-shadow: 0 6px 18px rgba(16,24,40,0.45);
+    }
+    #main-nav a:focus{
+      box-shadow: var(--focus-ring);
+      outline: none;
+    }
+
+    /* Hero */
+    .demo-hero{
+      padding:28px 0 18px;
+      display:flex;
+      align-items:flex-start;
+      gap:18px;
+    }
+    .demo-hero__title{
+      margin:0 0 10px 0;
+      font-size:clamp(1.4rem, 2.6vw, 2rem);
+      letter-spacing:-0.02em;
+    }
+    .demo-hero__lead{
+      margin:0;
+      color:var(--muted);
+      max-width: 64ch;
+    }
+
+    /* Demo grid / cards */
+    .demo-grid{
+      display:grid;
+      grid-template-columns:repeat(1,1fr);
+      gap:18px;
+      margin-top:18px;
+      align-items:start;
+    }
+
+    @media (min-width:641px){
+      .demo-grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width:961px){
+      .demo-grid{ grid-template-columns: repeat(2, 1fr); } /* keep 2 columns for demos to keep cards roomy */
+    }
+
+    .demo-block{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: var(--radius);
+      padding:18px;
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      box-shadow: 0 10px 30px rgba(3,8,20,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    .demo-block:hover{ transform: translateY(-6px); box-shadow: 0 20px 46px rgba(3,8,20,0.75); border-color: rgba(255,255,255,0.06); }
+    .demo-block:focus-within{ box-shadow: 0 18px 40px rgba(3,8,20,0.85); }
+
+    .demo-block__meta{
+      flex:1 1 48%;
+      min-width:0;
+    }
+    .demo-block__title{
+      margin:0 0 8px 0;
+      font-size:1.05rem;
+    }
+    .demo-block__desc{
+      margin:0 0 12px 0;
+      color:var(--muted);
+    }
+
+    .demo-block__cta{
+      display:inline-block;
+      padding:8px 12px;
+      background:transparent;
+      color:var(--accent);
+      border:1px solid rgba(110,231,183,0.18);
+      border-radius:10px;
+      text-decoration:none;
+      font-weight:700;
+      cursor:pointer;
+      transition: all var(--transition);
+      box-shadow: 0 6px 18px rgba(12,20,30,0.45);
+    }
+    .demo-block__cta:hover{
+      transform: translateY(-2px) scale(1.01);
+      background: linear-gradient(90deg, rgba(110,231,183,0.06), rgba(77,214,255,0.03));
+      color:#eafff6;
+    }
+
+    /* ensure robust focus styles for keyboard users */
+    .demo-block__cta:focus{
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .demo-block__cta:active{ transform: translateY(0); }
+
+    /* media / placeholder */
+    .demo-block__media{
+      width:160px;
+      height:100px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 160px;
+      border-radius:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border:1px solid rgba(255,255,255,0.02);
+      overflow:hidden;
+    }
+    .demo-block__media svg{ width:100%; height:100%; display:block; }
+
+    /* back link and footer */
+    .back-link{
+      display:inline-block;
+      color:var(--muted);
+      text-decoration:none;
+      font-weight:600;
+    }
+    .back-link:hover{ color:#ffffff; }
+
+    footer.site-footer{
+      margin-top:48px;
+      padding-top:28px;
+      border-top:1px solid rgba(255,255,255,0.02);
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      font-size:0.9rem;
+    }
+    .footer-nav a{
+      color:var(--muted);
+      text-decoration:none;
+      margin-right:12px;
+      font-weight:600;
+    }
+    .footer-nav a:last-child{ margin-right:0; }
+    .footer-nav a:hover{ color:#fff; }
+
+    /* small screens tweaks */
+    @media (max-width:640px){
+      .site-header{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .demo-block{ flex-direction:column; align-items:stretch; }
+      .demo-block__media{ width:100%; height:140px; flex:0 0 auto; }
+    }
+
+    /* Respect prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ transition:none !important; animation:none !important; }
+    }
+  </style>
+</head>
+<body class="demo-body">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="container site-header" role="banner" aria-labelledby="site-title">
+    <a class="logo" href="index.html" aria-label="Example Site home">
+      <span class="logo__mark" aria-hidden="true"></span>
+      <div>
+        <span id="site-title" class="site-title">Example Site</span>
+        <small class="site-tagline">Design playground</small>
+      </div>
+    </a>
+
+    <nav id="main-nav" role="navigation" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="what-we-do.html">What we do</a>
+      <a href="demo.html" aria-current="page">Demo</a>
+      <a href="https://example.com/contact" target="_blank" rel="noopener noreferrer">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main-content" class="container demo-page" role="main" aria-labelledby="demo-page-title">
+    <header class="demo-hero" role="region" aria-labelledby="demo-page-title">
+      <div>
+        <h1 id="demo-page-title" class="demo-hero__title">Live demos ? interactive previews</h1>
+        <p class="demo-hero__lead">Explore two curated interactive demos that showcase the UI pattern library. Each demo includes a quick description, a visual placeholder, and an accessible action to try the demo.</p>
+      </div>
+    </header>
+
+    <!-- demo grid: includes both .demo-grid (markup) and .demos (styles alias) to match existing CSS/JS expectations -->
+    <section class="demo-grid demos" aria-label="Demo collection">
+      <article id="demo-1" class="demo-block" role="region" aria-labelledby="demo-1-title" data-demo-block="1">
+        <div class="demo-block__meta">
+          <h2 id="demo-1-title" class="demo-block__title">Realtime Data Stream</h2>
+          <p id="demo-1-desc" class="demo-block__desc">(Example) Observe a simulated realtime data stream and explore visualizations that adapt to live input. Great for dashboards and monitoring interfaces.</p>
+          <!-- CTA includes multiple data attributes and both class names to be resilient to script selector variations -->
+          <a href="#" class="demo-block__cta demo-cta" data-demo-id="realtime-stream" data-demo="realtime-stream" role="button" aria-describedby="demo-1-desc">Open demo</a>
+        </div>
+
+        <div class="demo-block__media" role="img" aria-label="Placeholder visualization for realtime data stream">
+          <!-- Decorative SVG placeholder -->
+          <svg viewBox="0 0 88 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <rect x="0" y="0" width="88" height="56" rx="8" fill="#091226"/>
+            <g fill="#fff" opacity="0.06">
+              <rect x="8" y="10" width="12" height="36" rx="2"></rect>
+              <rect x="26" y="6" width="12" height="40" rx="2"></rect>
+              <rect x="44" y="18" width="12" height="28" rx="2"></rect>
+              <rect x="62" y="2" width="12" height="44" rx="2"></rect>
+            </g>
+          </svg>
+        </div>
+      </article>
+
+      <article id="demo-2" class="demo-block" role="region" aria-labelledby="demo-2-title" data-demo-block="2">
+        <div class="demo-block__meta">
+          <h2 id="demo-2-title" class="demo-block__title">Interactive Layout Builder</h2>
+          <p id="demo-2-desc" class="demo-block__desc">(Example) Compose layouts with drag-and-drop primitives and responsive presets. Useful when prototyping page structures or building templates quickly.</p>
+          <a href="#" class="demo-block__cta demo-cta" data-demo-id="layout-builder" data-demo="layout-builder" role="button" aria-describedby="demo-2-desc">Try it now</a>
+        </div>
+
+        <div class="demo-block__media" role="img" aria-label="Placeholder for interactive layout builder">
+          <svg viewBox="0 0 88 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <rect x="0" y="0" width="88" height="56" rx="8" fill="#081226"/>
+            <g fill="#fff" opacity="0.06">
+              <rect x="8" y="8" width="72" height="12" rx="2"></rect>
+              <rect x="8" y="28" width="32" height="20" rx="2"></rect>
+              <rect x="48" y="28" width="32" height="20" rx="2"></rect>
+            </g>
+          </svg>
+        </div>
+      </article>
+    </section>
+
+    <nav aria-label="Demo actions" style="margin-top:28px;">
+      <a class="back-link" href="index.html">? Back to home</a>
+    </nav>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site footer" class="container site-footer">
+    <small>? <span id="current-year" data-year></span> Example Site. All rights reserved.</small>
+    <nav aria-label="Footer navigation" class="footer-nav">
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </nav>
+  </footer>
+
+  <script>
+    /* Lightweight page-specific JS: feature-detected, small, defensive.
+       - Adds .js class to root for JS-dependent CSS (if needed elsewhere)
+       - Small keyboard support for anchors with role="button" (space activates)
+       - Sets current year if not already set
+       - Does not replace site-wide app behavior from external script.js
+    */
+    (function(){
+      if (!('addEventListener' in window && 'classList' in document.documentElement)) return;
+      document.documentElement.classList.add('js');
+
+      // Help keyboard users: ensure Space on anchors with role=button triggers click
+      function handleKeyActivation(e){
+        var target = e.target;
+        if (!target) return;
+        if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter'){
+          // Accept Enter (native) and Space (not native for anchors with role=button)
+          if (target.matches && target.matches('a[role="button"], [role="button"]')){
+            // Space on anchors should trigger click
+            if (e.key === ' ' || e.key === 'Spacebar'){
+              e.preventDefault();
+              target.click();
+            }
+          }
+        }
+      }
+
+      // Add delegated listener for performance
+      document.addEventListener('keydown', function(e){
+        var k = e.key;
+        if (!k) return;
+        if (k === ' ' || k === 'Spacebar' || k === 'Enter'){
+          handleKeyActivation(e);
+        }
+      }, true);
+
+      // Focus-visible-ish: add a class when keyboard used so we can style if needed
+      (function(){
+        var keyboardActive = false;
+        function onFirstTab(e){
+          if (e.key === 'Tab' || e.key === 'Shift') {
+            keyboardActive = true;
+            document.documentElement.classList.add('using-keyboard');
+            window.removeEventListener('keydown', onFirstTab, true);
+          }
+        }
+        window.addEventListener('keydown', onFirstTab, true);
+      })();
+
+      // Set current year if empty
+      try {
+        var yearSpan = document.getElementById('current-year');
+        if (yearSpan && (!yearSpan.textContent || yearSpan.textContent.trim()==='')){
+          var y = new Date().getFullYear();
+          yearSpan.textContent = String(y);
+        }
+      } catch (err){
+        // silent
+      }
+
+      // Small enhancement: add aria-pressed toggle behavior to demo CTAs so assistive tech can reflect "opened" state (defensive, non-breaking)
+      var ctas = document.querySelectorAll('.demo-block__cta');
+      Array.prototype.forEach.call(ctas, function(cta){
+        // Skip if already has aria-pressed/expanded semantics from site scripts
+        if (!cta.getAttribute('role')) cta.setAttribute('role','button');
+        if (!cta.hasAttribute('tabindex')) cta.setAttribute('tabindex','0');
+
+        cta.addEventListener('click', function(e){
+          // Example: toggle aria-pressed for local UX ? doesn't change navigation behavior
+          var pressed = cta.getAttribute('aria-pressed') === 'true';
+          cta.setAttribute('aria-pressed', String(!pressed));
+        }, false);
+      });
+    })();
+  </script>
+
+  <script defer src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Privacy Policy</title>
+  <meta name="description" content="Privacy Policy ? Learn how we collect, use, and protect your information." />
+  <link rel="canonical" href="privacy.html" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Preconnect & Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Shared stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Local visual polish and accessibility overrides (keeps page gorgeous even if shared CSS lags) -->
+  <style>
+    :root{
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --muted: #64748b; /* slate-500 */
+      --text: #0b1220; /* near-black */
+      --accent: #0ea5a4; /* teal-ish */
+      --accent-dark: #0b8a87;
+      --glass: rgba(11,18,32,0.04);
+      --focus-ring: rgba(14,165,164,0.20);
+      --container-max: 1100px;
+      --radius: 12px;
+      --transition: 220ms cubic-bezier(.2,.9,.3,1);
+    }
+
+    /* Base layout refinements for the policy page */
+    html,body { height:100%; }
+    body {
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #f8fafc 0%, #fbfdff 60%);
+      color: var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      font-size:16px;
+    }
+
+    .container{
+      width: calc(100% - 48px);
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    /* Skip link */
+    .skip-link{
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .skip-link:focus{
+      left: 16px;
+      top: 16px;
+      width: auto;
+      height: auto;
+      padding: 8px 12px;
+      background: var(--card-bg);
+      color: var(--text);
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(11,18,32,0.08);
+      z-index: 9999;
+    }
+
+    /* Header */
+    .site-header{
+      backdrop-filter: blur(6px);
+      background: linear-gradient(90deg, rgba(255,255,255,0.72), rgba(255,255,255,0.56));
+      border-bottom: 1px solid rgba(11,18,32,0.04);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .header__inner{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 24px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      text-decoration:none;
+      color:var(--text);
+      font-weight:700;
+      letter-spacing: -0.01em;
+    }
+    .brand__logo{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;
+      height:40px;
+      border-radius:8px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+      color:white;
+      font-weight:800;
+      font-size:18px;
+      box-shadow: 0 6px 20px rgba(14,165,164,0.12), inset 0 -4px 10px rgba(255,255,255,0.06);
+    }
+    .nav--primary .nav__list{
+      display:flex;
+      gap:6px;
+      list-style:none;
+      margin:0;
+      padding:0;
+      align-items:center;
+    }
+    .nav__link{
+      display:inline-block;
+      padding:8px 12px;
+      color:var(--muted);
+      text-decoration:none;
+      border-radius:8px;
+      font-weight:600;
+      transition: color var(--transition), background-color var(--transition), transform var(--transition);
+    }
+    .nav__link:hover{
+      color:var(--text);
+      background: var(--glass);
+      transform: translateY(-2px);
+    }
+    .nav__link[aria-current="page"],
+    .nav__link.active{
+      color:var(--accent-dark);
+      background: linear-gradient(90deg, rgba(14,165,164,0.08), rgba(11,18,32,0.02));
+      box-shadow: 0 4px 14px rgba(14,165,164,0.06);
+    }
+    .nav__link:focus{
+      outline: none;
+      box-shadow: 0 0 0 4px var(--focus-ring);
+    }
+
+    /* Main hero policy card */
+    .main__inner{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      align-items:start;
+      padding: 36px 24px;
+    }
+    .policy{
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.98));
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(11,18,32,0.06);
+      border: 1px solid rgba(11,18,32,0.03);
+      animation: fadeInUp 420ms ease both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .policy__title{
+      font-size: 1.75rem;
+      margin: 0 0 6px 0;
+      color:var(--text);
+      letter-spacing:-0.01em;
+    }
+    .policy__summary{
+      margin:0 0 18px 0;
+      color:var(--muted);
+    }
+
+    .policy__section{
+      margin-top:18px;
+      padding-top:12px;
+      border-top: 1px dashed rgba(11,18,32,0.04);
+    }
+    .policy__section-title{
+      font-size: 1.05rem;
+      margin:0 0 6px 0;
+      color:var(--text);
+    }
+    .policy__text{
+      margin:0 0 8px 0;
+      color:var(--muted);
+    }
+
+    /* Buttons */
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      font-weight:600;
+      border-radius:10px;
+      text-decoration:none;
+      border: 1px solid transparent;
+      cursor:pointer;
+      transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition);
+      margin-right:8px;
+    }
+    .btn--primary{
+      background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+      color: white;
+      box-shadow: 0 10px 30px rgba(14,165,164,0.12);
+    }
+    .btn--primary:hover{ transform: translateY(-3px); }
+    .btn--outline{
+      background: transparent;
+      color: var(--accent-dark);
+      border-color: rgba(11,18,32,0.06);
+      box-shadow: inset 0 -1px 0 rgba(11,18,32,0.02);
+    }
+    .btn:focus{
+      outline:none;
+      box-shadow: 0 0 0 5px var(--focus-ring);
+    }
+
+    /* Aside */
+    .aside{
+      padding: 0 24px;
+    }
+    .aside__inner{
+      max-width: 320px;
+      margin-left: auto;
+    }
+    .aside__nav{ background: transparent; }
+    .aside__list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+    .aside__link{
+      color:var(--accent-dark);
+      text-decoration:none;
+      font-weight:600;
+      padding:8px;
+      border-radius:8px;
+    }
+    .aside__link:hover{ background: var(--glass); }
+
+    /* Footer improved */
+    .footer{
+      margin-top:36px;
+      padding:20px 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.98));
+      border-top: 1px solid rgba(11,18,32,0.04);
+    }
+    .footer__inner{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .footer__links{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .footer__link{
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-weight:600;
+      font-size: 0.95rem;
+      transition: background-color var(--transition), color var(--transition), transform var(--transition);
+    }
+    .footer__link:hover{
+      background: var(--glass);
+      transform: translateY(-2px);
+      color: var(--accent-dark);
+      text-decoration: underline;
+    }
+    .footer__link:focus{
+      outline: none;
+      box-shadow: 0 0 0 4px var(--focus-ring);
+    }
+    .footer__sep{ color: rgba(11,18,32,0.24); margin:0 6px; }
+
+    .footer__meta{ color: var(--muted); font-size:0.92rem; }
+
+    /* Responsive layout for larger screens: two-column content */
+    @media (min-width: 980px){
+      .main__inner{
+        grid-template-columns: 1fr 320px;
+      }
+      .policy{ padding:36px; }
+    }
+
+    /* Accessibility niceties: increased hit target for small screens */
+    @media (max-width:480px){
+      .nav__link{ padding:10px 12px; }
+      .footer__link{ padding:10px 12px; }
+    }
+
+    /* Utility */
+    .visually-hidden{
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px,1px,1px,1px);
+      white-space: nowrap;
+    }
+  </style>
+
+  <!-- Design tokens for potential JS/CSS hooks (documented for tooling) -->
+  <meta name="theme-color" content="#0b1220">
+</head>
+<body class="page page--privacy" data-page="privacy" id="page-root">
+
+  <!-- Skip to main content -->
+  <a href="#main-content" class="skip-link" id="skip-to-content">Skip to main content</a>
+
+  <!-- Site header -->
+  <header id="site-header" class="site-header" role="banner" aria-label="Site header">
+    <div class="container header__inner">
+      <a class="brand" href="index.html" aria-label="Homepage">
+        <span class="brand__logo" aria-hidden="true">AS</span>
+        <span class="brand__name">Acme Studio</span>
+      </a>
+
+      <nav id="primary-nav" class="nav nav--primary" role="navigation" aria-label="Primary navigation" data-nav>
+        <ul class="nav__list">
+          <li class="nav__item"><a class="nav__link" href="index.html">Home</a></li>
+          <li class="nav__item"><a class="nav__link" href="about.html">About</a></li>
+          <li class="nav__item"><a class="nav__link" href="demo.html">Demo</a></li>
+          <li class="nav__item"><a class="nav__link" href="what-we-do.html">What We Do</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main id="main-content" class="main" role="main" aria-labelledby="privacy-heading">
+    <div class="container main__inner">
+      <article class="policy policy--privacy" id="privacy-article" role="article" aria-describedby="privacy-summary" data-policy="privacy">
+        <header class="policy__header">
+          <h1 id="privacy-heading" class="policy__title">Privacy Policy</h1>
+          <p id="privacy-summary" class="policy__summary">This page explains what information we collect, how we use it, and the choices you have. We aim to be transparent, minimize data collection, and protect your information.</p>
+        </header>
+
+        <section class="policy__section" id="what-we-collect" aria-labelledby="collect-heading">
+          <h2 id="collect-heading" class="policy__section-title">Information We Collect</h2>
+          <p class="policy__text">We collect only the data needed to provide and improve our services: contact information you submit, usage analytics to understand and improve site performance, and any details you share when interacting with our team. We avoid collecting unnecessary personal data.</p>
+        </section>
+
+        <section class="policy__section" id="how-we-use" aria-labelledby="use-heading">
+          <h2 id="use-heading" class="policy__section-title">How We Use Information</h2>
+          <p class="policy__text">Information is used to respond to inquiries, deliver services, personalize experiences, and comply with legal obligations. Aggregated analytics help us make the site faster and more useful. We do not sell personal data to third parties.</p>
+        </section>
+
+        <section class="policy__section" id="security" aria-labelledby="security-heading">
+          <h2 id="security-heading" class="policy__section-title">Security & Retention</h2>
+          <p class="policy__text">We implement reasonable administrative, technical, and physical safeguards to protect data. Retention periods are limited to what is necessary for the purposes described and as required by law. If you have concerns about data retention, contact us.</p>
+        </section>
+
+        <section class="policy__section" id="your-rights" aria-labelledby="rights-heading">
+          <h2 id="rights-heading" class="policy__section-title">Your Rights</h2>
+          <p class="policy__text">You can request access to the personal data we hold about you, ask for corrections, or request deletion where applicable. To exercise these rights, use the contact options below and include sufficient detail so we can verify your request.</p>
+
+          <p class="policy__actions" style="margin-top:12px;">
+            <a class="btn btn--primary" href="index.html" id="contact-home-link" data-allow-nav>Return to homepage</a>
+            <a class="btn btn--outline" href="mailto:privacy@example.com" id="contact-email" data-external>Contact privacy team</a>
+          </p>
+        </section>
+
+        <footer class="policy__meta">
+          <p class="policy__updated" aria-hidden="false">Last updated: <time datetime="2025-12-01">December 1, 2025</time></p>
+        </footer>
+      </article>
+
+      <!-- Supplementary aside (optional) -->
+      <aside class="aside" role="complementary" aria-label="Related">
+        <div class="container aside__inner" style="padding:0;">
+          <nav class="aside__nav" aria-label="Policy links">
+            <ul class="aside__list">
+              <li><a href="terms.html" class="aside__link" data-allow-nav>Terms of Use</a></li>
+              <li><a href="index.html" class="aside__link" data-allow-nav>Home</a></li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Site footer -->
+  <footer class="footer" id="site-footer" role="contentinfo" aria-label="Site footer">
+    <div class="container footer__inner">
+      <div class="footer__links" role="navigation" aria-label="Footer links">
+        <a class="footer__link" href="privacy.html" data-allow-nav aria-current="page">Privacy</a>
+        <span class="footer__sep" aria-hidden="true"> | </span>
+        <a class="footer__link" href="terms.html" data-allow-nav>Terms</a>
+      </div>
+
+      <div class="footer__meta">
+        <p class="footer__copyright">? <span aria-hidden="true">Acme Studio</span> <span class="visually-hidden">Copyright</span> 2025</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Small page-specific behavior: ensure footer and nav links allow normal navigation.
+       This script is intentionally lightweight and only enhances accessibility UI.
+       It also marks the active navigation link where possible. -->
+  <script>
+    (function () {
+      // Mark primary nav active link based on current pathname (simple, robust)
+      try {
+        var current = window.location.pathname.split('/').pop() || 'index.html';
+        var navLinks = document.querySelectorAll('#primary-nav a.nav__link');
+        navLinks.forEach(function (link) {
+          var href = (link.getAttribute('href') || '').split('/').pop();
+          if (href === current) {
+            link.classList.add('active');
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      } catch (e) {
+        // gracefully ignore on older browsers
+        console.warn('Nav active script failed', e);
+      }
+
+      // Ensure footer links and aside links with data-allow-nav are not interfered with by roaming delegated handlers.
+      // We add a small attribute to communicate allowance to any global router script on the page.
+      try {
+        var allowLinks = document.querySelectorAll('a[data-allow-nav]');
+        allowLinks.forEach(function (a) {
+          // set a data attribute that other scripts can check (camelCase style)
+          a.dataset.allowNav = 'true';
+        });
+      } catch (e) {}
+
+      // Lightweight mobile nav toggle fallback (no heavy dependency)
+      // Only inject if a primary nav exists with a small set of items.
+      try {
+        var nav = document.getElementById('primary-nav');
+        if (nav) {
+          // Create a simple toggle button for small screens
+          var toggleId = 'navToggle';
+          if (!document.getElementById(toggleId)) {
+            var btn = document.createElement('button');
+            btn.id = toggleId;
+            btn.type = 'button';
+            btn.className = 'nav-toggle';
+            btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-controls', 'primary-nav');
+            btn.setAttribute('aria-label', 'Toggle navigation');
+            btn.style.border = 'none';
+            btn.style.background = 'transparent';
+            btn.style.color = 'var(--muted)';
+            btn.style.cursor = 'pointer';
+            btn.style.fontWeight = 700;
+            btn.style.padding = '8px';
+            btn.innerHTML = 'Menu';
+            btn.addEventListener('click', function (ev) {
+              var expanded = this.getAttribute('aria-expanded') === 'true';
+              this.setAttribute('aria-expanded', (!expanded).toString());
+              nav.classList.toggle('nav--open');
+            });
+            // place before nav to the right inside header
+            var headerInner = document.querySelector('.header__inner');
+            if (headerInner) {
+              headerInner.insertBefore(btn, nav);
+              // Basic styles for small screens
+              var style = document.createElement('style');
+              style.innerHTML = "\
+                .nav-toggle{ display:none; }\
+                @media (max-width:860px){\
+                  .nav-toggle{ display:inline-block; margin-left:8px; }\
+                  .nav--primary .nav__list{ display:none; position:absolute; right:16px; top:62px; background:var(--card-bg); border-radius:12px; padding:12px; box-shadow:0 12px 40px rgba(11,18,32,0.08); }\
+                  .nav--primary.nav--open .nav__list{ display:flex; flex-direction:column; gap:6px; min-width:180px; }\
+                }";
+              document.head.appendChild(style);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Nav toggle init error', e);
+      }
+    })();
+  </script>
+
+  <!-- Global script -->
+  <script defer src="script.js"></script>
+</body>
+</html>

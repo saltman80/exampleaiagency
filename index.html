@@ -14,45 +14,182 @@
   <!-- Shared stylesheet -->
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Small page-specific polish to make the demo promo stand out.
-       Kept minimal and scoped so global stylesheet remains authoritative. */
-    .promo {
-      margin-top: calc(var(--space-lg) * 0.5);
-      margin-bottom: var(--space-lg);
+    /*
+      Page-specific additions:
+      - Responsive services grid and focused card interactions
+      - Graceful-degradation pattern: additional content is only hidden when JS is active (.js root class)
+      - Focus & hover states for service cards and toggles
+    */
+
+    /* Services grid: mobile (1 column) / tablet (2 columns) / desktop (3 columns) */
+    .services .container { padding-top: var(--space-sm); padding-bottom: var(--space-lg); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
     }
-    .promo__card {
-      display:flex;
-      gap:var(--space-md);
-      align-items:center;
-      padding:var(--space-md);
-      border-radius:var(--radius-lg);
-      background: linear-gradient(180deg, rgba(124,92,255,0.06), rgba(110,231,183,0.02));
-      border:1px solid rgba(124,92,255,0.06);
-      box-shadow: 0 8px 30px rgba(2,6,23,0.45);
+    @media (min-width: 641px) and (max-width: 960px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    .promo__media {
-      flex:0 0 160px;
-      width:160px;
-      height:96px;
-      border-radius:10px;
-      background: linear-gradient(135deg, rgba(124,92,255,0.14), rgba(110,231,183,0.06));
+    @media (min-width: 961px) {
+      .services-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .service-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+      box-shadow: 0 12px 36px rgba(2,6,23,0.55);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+      color: var(--color-foreground);
+      position: relative;
+      overflow: visible;
+      min-height: 160px;
+    }
+
+    .service-card:hover,
+    .service-card:focus-within {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 80px rgba(2,6,23,0.7);
+    }
+
+    .service-card__header {
       display:flex;
       align-items:center;
-      justify-content:center;
-      color:var(--color-foreground);
+      justify-content:space-between;
+      gap: var(--space-sm);
+    }
+
+    .service-example {
+      font-size: .775rem;
+      color: var(--color-accent-2);
       font-weight:700;
-      font-size:0.95rem;
-      text-align:center;
-      box-shadow: inset 0 -8px 24px rgba(0,0,0,0.15);
+      margin-right:8px;
+      white-space:nowrap;
     }
-    .promo__body { flex:1 1 auto; min-width:0; }
-    .promo__title { font-size:var(--fs-2); margin-bottom:6px; color:var(--color-foreground); }
-    .promo__desc { color:var(--color-muted); margin-bottom:12px; }
-    .promo__actions { display:flex; gap:10px; align-items:center; }
-    .promo .btn { padding:10px 14px; font-weight:800; border-radius:10px; }
-    @media (max-width:699px){
-      .promo__card { flex-direction:column; align-items:stretch; gap:12px; padding:var(--space-sm); }
-      .promo__media { width:100%; height:140px; border-radius:10px; }
+
+    .service-title {
+      font-size: var(--fs-2);
+      margin:0;
+      color: var(--color-foreground);
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      line-height:1.05;
+    }
+
+    .service-desc {
+      margin:0;
+      color: var(--color-muted);
+      font-size: var(--fs-3);
+      line-height:1.45;
+    }
+
+    /* Extra description that can be toggled. Visible by default for no-JS; hidden when JS enabled (.js on root) */
+    .service-desc--more {
+      margin-top: 6px;
+      color: var(--color-muted);
+      font-size: .95rem;
+      line-height:1.5;
+      transition: max-height 240ms var(--transition-fast), opacity 240ms var(--transition-fast);
+      overflow: hidden;
+    }
+
+    /* When JS is present, hide the "more" bits by default to enable toggling */
+    .js .service-desc--more { display: block; max-height: 0; opacity: 0; padding: 0; margin-top: 0; }
+    .js .service-card.is-expanded .service-desc--more { max-height: 420px; opacity: 1; margin-top: 8px; padding-top: 0; }
+
+    /* Toggle button styling */
+    .service-toggle {
+      all: unset;
+      cursor: pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:8px;
+      color:var(--color-accent-2);
+      font-weight:700;
+      border:1px solid transparent;
+      background:transparent;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+    .service-toggle:hover { background: rgba(255,255,255,0.02); transform: translateY(-2px); }
+    .service-toggle:focus { box-shadow: 0 0 0 6px rgba(124,92,255,0.06); border-color: rgba(124,92,255,0.06); outline: none; }
+
+    /* CTA link styling inside cards */
+    .service-cta {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:10px;
+      background: linear-gradient(90deg, var(--color-cta), var(--color-accent-2));
+      color: var(--color-cta-contrast);
+      font-weight:800;
+      text-decoration:none;
+      margin-top:auto;
+      width: fit-content;
+    }
+    .service-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 34px rgba(79,209,197,0.1); }
+
+    /* Small metadata row */
+    .service-meta {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      color:var(--color-muted);
+      font-size:.9rem;
+    }
+
+    /* Ensure toggle and CTA are visible on narrower screens */
+    @media (max-width:640px){
+      .service-card { min-height: 180px; }
+      .service-toggle { padding:10px 12px; font-size:.95rem; }
+    }
+  </style>
+
+  <!-- Footer-specific visual & accessibility adjustments to ensure strong contrast and keyboard visibility -->
+  <style>
+    /* Footer layout adjustments to ensure comfortable hit targets and visible focus */
+    .site-footer .footer-inner { align-items:center; gap:var(--space-md); }
+    .site-footer .footer-nav__list { list-style:none; margin:0; padding:0; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .site-footer .footer-nav__link {
+      color: var(--color-muted);
+      padding:8px 10px;
+      border-radius:8px;
+      font-weight:700;
+      text-decoration:none;
+      background:transparent;
+      transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+      min-height:40px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .site-footer .footer-nav__link:hover,
+    .site-footer .footer-nav__link:focus {
+      color: var(--color-foreground);
+      background: rgba(255,255,255,0.02);
+      transform: translateY(-2px);
+    }
+    .site-footer .footer-nav__link:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 6px rgba(124,92,255,0.06);
+      border-color: rgba(124,92,255,0.06);
+    }
+    /* Visual separator for paired links (privacy | terms) when in a single list item */
+    .footer-separator { color: rgba(255,255,255,0.08); padding: 0 6px; user-select:none; }
+    /* Ensure contrast of brand and copyright */
+    .footer__copyright { color: var(--color-muted); margin-top:4px; font-size:.95rem; }
+    @media (max-width:640px) {
+      .site-footer .footer-inner { flex-direction:column; align-items:flex-start; gap: var(--space-sm); }
     }
   </style>
 </head>
@@ -83,7 +220,7 @@
           type="button"
           aria-controls="site-nav-list"
           aria-expanded="false"
-          aria-label="Toggle navigation"
+          aria-label="Open main menu"
           data-js="nav-toggle"
           data-nav-toggle
         >
@@ -102,8 +239,10 @@
             <li class="nav-item"><a class="nav-link nav-link-home" href="index.html" data-js="nav-link" data-nav-link aria-current="page">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="about.html" data-js="nav-link" data-nav-link>About</a></li>
             <li class="nav-item"><a class="nav-link" href="demo.html" data-js="nav-link" data-nav-link>Demo</a></li>
+            <li class="nav-item"><a class="nav-link" href="what-we-do.html" data-js="nav-link" data-nav-link>What we do</a></li>
             <li class="nav-item"><a class="nav-link" href="#services" data-js="nav-link" data-nav-link>Services</a></li>
-            <li class="nav-item"><a class="nav-link" href="https://example.com/contact" target="_blank" rel="noopener noreferrer" data-external>Contact</a></li>
+            <!-- Use an internal anchor to the contact section to avoid broken external pages -->
+            <li class="nav-item"><a class="nav-link" href="index.html#contact" data-js="nav-link" data-nav-link>Contact</a></li>
           </ul>
         </div>
       </nav>
@@ -131,6 +270,9 @@
             <!-- Decorative placeholder for future visuals; purely presentational -->
             <svg width="320" height="220" viewBox="0 0 320 220" aria-hidden="true" focusable="false" class="visual__svg">
               <rect width="320" height="220" rx="16" fill="#0f1724" opacity="0.06"></rect>
+              <!-- subtle accent shapes -->
+              <circle cx="260" cy="50" r="36" fill="#7c5cff" opacity="0.06"></circle>
+              <rect x="24" y="120" width="90" height="60" rx="8" fill="#6ee7b7" opacity="0.04"></rect>
             </svg>
           </div>
         </aside>
@@ -139,7 +281,7 @@
 
     <!-- Promo block linking to the demo page (discoverable CTA for demo.html) -->
     <section class="promo demo-promo container" aria-labelledby="demo-promo-title">
-      <div class="promo__card" role="region" aria-labelledby="demo-promo-title" tabindex="-1">
+      <div class="promo__card" role="region" aria-labelledby="demo-promo-title" tabindex="0">
         <div class="promo__media" role="img" aria-label="Interactive demo preview">
           Demo preview
         </div>
@@ -159,25 +301,124 @@
         <h2 id="services-title" class="section__title">What we do</h2>
         <p class="section__intro">Small, directionally accurate engagements ? prototypes, strategy, and tooling.</p>
 
-        <ul class="services__list" role="list">
-          <li class="service-card card" role="listitem" data-service="prototype">
-            <h3 class="service-card__title">Prototyping</h3>
-            <p class="service-card__body">Rapid exploration of product concepts with interactive AI-driven prototypes.</p>
-            <a class="service-card__link" href="#contact" aria-label="Learn more about prototyping">Learn more</a>
-          </li>
+        <!-- Responsive services grid (semantic articles). Each card includes an explicit '(Example)' marker so editors can replace. -->
+        <div class="services-grid" role="list">
+          <article class="service-card" role="listitem" id="svc-1" aria-labelledby="svc-1-title" data-service="prototype">
+            <div class="service-card__header">
+              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                <span class="service-example">(Example)</span>
+                <h3 id="svc-1-title" class="service-title">Prototyping</h3>
+              </div>
+              <button
+                class="service-toggle"
+                aria-expanded="false"
+                aria-controls="svc-1-more"
+                type="button"
+              >Details</button>
+            </div>
 
-          <li class="service-card card" role="listitem" data-service="strategy">
-            <h3 class="service-card__title">AI Strategy</h3>
-            <p class="service-card__body">Define responsible, scalable approaches to integrating AI into your product roadmap.</p>
-            <a class="service-card__link" href="about.html" aria-label="Learn more about AI strategy">Learn more</a>
-          </li>
+            <p class="service-desc">Rapid exploration of product concepts with interactive AI-driven prototypes.</p>
 
-          <li class="service-card card" role="listitem" data-service="tooling">
-            <h3 class="service-card__title">Tooling & Ops</h3>
-            <p class="service-card__body">Build pragmatic tooling and processes to support ML/AI teams in production.</p>
-            <a class="service-card__link" href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="Visit external tooling page">Visit</a>
-          </li>
-        </ul>
+            <div class="service-desc--more" id="svc-1-more" aria-hidden="true">
+              <p>Example extended description: we sketch flows, wire interactions, and connect simple models to validate user value quickly. Replace this placeholder content with specifics for each offering.</p>
+            </div>
+
+            <div class="service-meta" aria-hidden="false">
+              <span>2?6 week engagements</span>
+              <span>?</span>
+              <span>Remote-friendly</span>
+            </div>
+
+            <a class="service-cta" href="#contact" aria-label="Example: Learn more about Prototyping">Example: Learn more</a>
+          </article>
+
+          <article class="service-card" role="listitem" id="svc-2" aria-labelledby="svc-2-title" data-service="strategy">
+            <div class="service-card__header">
+              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                <span class="service-example">(Example)</span>
+                <h3 id="svc-2-title" class="service-title">AI Strategy</h3>
+              </div>
+              <button
+                class="service-toggle"
+                aria-expanded="false"
+                aria-controls="svc-2-more"
+                type="button"
+              >Details</button>
+            </div>
+
+            <p class="service-desc">Define responsible, scalable approaches to integrating AI into your product roadmap.</p>
+
+            <div class="service-desc--more" id="svc-2-more" aria-hidden="true">
+              <p>Example extended description: we map user journeys, identify signals, and propose pragmatic data & model roadmaps aligned to your business goals. Replace as needed.</p>
+            </div>
+
+            <div class="service-meta">
+              <span>Workshops & playbooks</span>
+              <span>?</span>
+              <span>Stakeholder-aligned</span>
+            </div>
+
+            <a class="service-cta" href="about.html" aria-label="Example: Learn more about AI Strategy">Example: Learn more</a>
+          </article>
+
+          <article class="service-card" role="listitem" id="svc-3" aria-labelledby="svc-3-title" data-service="tooling">
+            <div class="service-card__header">
+              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                <span class="service-example">(Example)</span>
+                <h3 id="svc-3-title" class="service-title">Tooling & Ops</h3>
+              </div>
+              <button
+                class="service-toggle"
+                aria-expanded="false"
+                aria-controls="svc-3-more"
+                type="button"
+              >Details</button>
+            </div>
+
+            <p class="service-desc">Build pragmatic tooling and processes to support ML/AI teams in production.</p>
+
+            <div class="service-desc--more" id="svc-3-more" aria-hidden="true">
+              <p>Example extended description: we design developer ergonomics, monitoring, and model versioning practices that scale. Content here is a placeholder to replace with concrete offerings.</p>
+            </div>
+
+            <div class="service-meta">
+              <span>Integrations & automation</span>
+              <span>?</span>
+              <span>Ops-minded</span>
+            </div>
+
+            <a class="service-cta" href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="Example: Visit external tooling page">Example: Visit</a>
+          </article>
+
+          <article class="service-card" role="listitem" id="svc-4" aria-labelledby="svc-4-title" data-service="research">
+            <div class="service-card__header">
+              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                <span class="service-example">(Example)</span>
+                <h3 id="svc-4-title" class="service-title">Research & Evaluation</h3>
+              </div>
+              <button
+                class="service-toggle"
+                aria-expanded="false"
+                aria-controls="svc-4-more"
+                type="button"
+              >Details</button>
+            </div>
+
+            <p class="service-desc">User research, prototype testing, and model evaluation to understand real-world behavior.</p>
+
+            <div class="service-desc--more" id="svc-4-more" aria-hidden="true">
+              <p>Example extended description: we run lightweight studies, log qualitative signals, and translate findings into actionable design changes. Replace to add team-specific info.</p>
+            </div>
+
+            <div class="service-meta">
+              <span>User-centered</span>
+              <span>?</span>
+              <span>Data-informed</span>
+            </div>
+
+            <a class="service-cta" href="about.html#research" aria-label="Example: Learn more about Research">Example: Learn more</a>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -222,8 +463,14 @@
         <ul class="footer-nav__list">
           <li><a href="about.html" class="footer-nav__link">About</a></li>
           <li><a href="demo.html" class="footer-nav__link">Demo</a></li>
+          <li><a href="what-we-do.html" class="footer-nav__link">What we do</a></li>
           <li><a href="#services" class="footer-nav__link">Services</a></li>
-          <li><a href="https://example.com/privacy" class="footer-nav__link" target="_blank" rel="noopener noreferrer">Privacy</a></li>
+          <!-- Updated to relative legal pages (privacy.html and terms.html) per project plan -->
+          <li>
+            <a href="privacy.html" class="footer-nav__link" aria-label="Privacy policy">Privacy</a>
+            <span class="footer-separator" aria-hidden="true">|</span>
+            <a href="terms.html" class="footer-nav__link" aria-label="Terms of use">Terms</a>
+          </li>
         </ul>
       </nav>
     </div>
@@ -232,14 +479,15 @@
   <!-- Small defensive inline script:
        - Ensure the displayed year is current (only DOM-manipulation; non-invasive).
        - Do light defensive wiring of aria-controls if the ID is missing.
+       - Add an accessible, robust nav toggle with keyboard & escape handling.
        - Keep ids and data- attributes consistent with JS initializers that will run from script.js.
   -->
   <script>
     (function () {
       'use strict';
       try {
-        // Update any [data-year] placeholders to the current year
-        var yearEl = document.querySelector('[data-year]');
+        // Update any [data-year] placeholders to the current year (support multiple selectors)
+        var yearEl = document.querySelector('[data-year]') || document.getElementById('year') || document.getElementById('current-year');
         if (yearEl) {
           var now = new Date();
           var y = now.getFullYear();
@@ -248,33 +496,298 @@
           }
         }
 
-        // Defensive aria-controls wiring: ensure navToggle references an existing element
+        // Find navToggle + navPanel with resilient selectors
         var navToggle = document.querySelector('[data-js="nav-toggle"], [data-nav-toggle], .nav-toggle, #navToggle');
         var nav = document.querySelector('[data-js="nav"], [data-nav], .site-nav, #siteNav');
+        var navPanel = document.querySelector('[data-js="nav-panel"], [data-nav-panel], .nav-panel, #site-nav-panel');
+
+        // Ensure aria-controls references a real element
         if (navToggle && nav) {
           var ariaControls = navToggle.getAttribute('aria-controls');
-          var target = ariaControls ? document.getElementById(ariaControls) : null;
-          if (!target) {
+          var targetEl = ariaControls ? document.getElementById(ariaControls) : null;
+          if (!targetEl) {
             var fallbackList = nav.querySelector('.nav-list, [data-js="nav-list"], [data-nav-list]');
             if (fallbackList) {
               if (!fallbackList.id) { fallbackList.id = 'site-nav-list'; }
               navToggle.setAttribute('aria-controls', fallbackList.id);
             }
           }
-          // Ensure the nav panel has aria-hidden initial state consistent with aria-expanded
-          var navPanel = nav.querySelector('.nav-panel, [data-js="nav-panel"], [data-nav-panel]') || document.getElementById('site-nav-panel');
+          // Initialize panel aria-hidden according to aria-expanded (default false)
           if (navPanel && navToggle.getAttribute('aria-expanded') === 'false') {
             navPanel.setAttribute('aria-hidden', 'true');
           }
         }
+
+        // Accessible nav toggle behavior (guarded so it only runs when elements exist)
+        if (navToggle && navPanel) {
+          var closeOnEscape = function (e) {
+            if (e.key === 'Escape' || e.key === 'Esc') {
+              if (navPanel.classList.contains('is-open')) {
+                setNavOpen(false, { returnFocus: true });
+              }
+            }
+          };
+
+          var onDocumentClick = function (e) {
+            // If clicking outside the panel and toggle while open, close it
+            if (!navPanel.contains(e.target) && !navToggle.contains(e.target) && navPanel.classList.contains('is-open')) {
+              setNavOpen(false, { returnFocus: true });
+            }
+          };
+
+          var setNavOpen = function (isOpen, opts) {
+            opts = opts || {};
+            navToggle.setAttribute('aria-expanded', String(!!isOpen));
+            navPanel.setAttribute('aria-hidden', String(!isOpen));
+            navPanel.classList.toggle('is-open', !!isOpen);
+            document.body.classList.toggle('nav-open', !!isOpen);
+            // also mirror a data attribute for other scripts/styles if needed
+            if (nav) {
+              nav.setAttribute('data-open', !!isOpen ? 'true' : 'false');
+            }
+            if (!isOpen && opts.returnFocus) {
+              try { navToggle.focus(); } catch (e) { /* silent */ }
+            } else if (isOpen) {
+              // move focus to first focusable item inside panel for accessibility
+              var firstFocusable = navPanel.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+              if (firstFocusable) { firstFocusable.focus(); }
+            }
+          };
+
+          // Toggle via click or keyboard activation
+          navToggle.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            var currentlyOpen = navPanel.classList.contains('is-open') || document.body.classList.contains('nav-open');
+            setNavOpen(!currentlyOpen, { returnFocus: false });
+          }, { passive: false });
+
+          // Support Enter/Space activation if button-like element used (defensive)
+          navToggle.addEventListener('keydown', function (ev) {
+            if (ev.key === ' ' || ev.key === 'Spacebar' || ev.key === 'Enter') {
+              ev.preventDefault();
+              navToggle.click();
+            }
+          });
+
+          // Global handlers while panel is open
+          document.addEventListener('keydown', closeOnEscape);
+          document.addEventListener('click', onDocumentClick);
+          // Clean up on page unload to avoid leaks (defensive)
+          window.addEventListener('unload', function () {
+            document.removeEventListener('keydown', closeOnEscape);
+            document.removeEventListener('click', onDocumentClick);
+          });
+        }
       } catch (e) {
-        // Non-critical defensive code should fail silently
+        // Non-critical defensive code should fail silently to avoid breaking the page
+        // but log during development to aid debugging (no PII)
+        if (window.console && console.warn) {
+          console.warn('Non-fatal page init error:', e && e.message ? e.message : e);
+        }
       }
     }());
   </script>
 
+  <!-- Minimal client-side feature-detected enhancements for service-card toggles.
+       - Adds .js to documentElement when JS is active (so extra content can be hidden safely).
+       - Attaches click/keyboard handlers to each .service-toggle button and to the card as a fallback.
+       - Graceful degradation: when JS is disabled, extended descriptions remain visible.
+  -->
+  <script>
+    (function () {
+      'use strict';
+      // Feature detection - bail early for very old browsers
+      if (!( 'addEventListener' in window && 'classList' in document.documentElement )) { return; }
+
+      var onDom = function (fn) {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', fn);
+        } else {
+          fn();
+        }
+      };
+
+      onDom(function () {
+        // Add JS marker to root for CSS-based progressive enhancement
+        document.documentElement.classList.add('js');
+
+        // Helper: find all service cards
+        var serviceCards = Array.prototype.slice.call(document.querySelectorAll('.service-card'));
+
+        if (!serviceCards.length) { return; }
+
+        serviceCards.forEach(function (card, idx) {
+          // Find the toggle button and the extra content controlled by it
+          var toggle = card.querySelector('.service-toggle');
+          // If no toggle present, create one (defensive)
+          if (!toggle) {
+            toggle = document.createElement('button');
+            toggle.className = 'service-toggle';
+            toggle.type = 'button';
+            toggle.textContent = 'Details';
+            toggle.setAttribute('aria-expanded', 'false');
+            // Append to header area if possible else at end
+            var header = card.querySelector('.service-card__header') || card;
+            header.appendChild(toggle);
+          }
+
+          // Determine the content element via aria-controls or by selector
+          var controlledId = toggle.getAttribute('aria-controls');
+          var contentEl = controlledId ? document.getElementById(controlledId) : card.querySelector('.service-desc--more');
+
+          // Defensive wiring of aria-controls if missing
+          if (!controlledId && contentEl) {
+            // ensure unique id
+            var newId = 'svc-' + (idx + 1) + '-more';
+            contentEl.id = newId;
+            toggle.setAttribute('aria-controls', newId);
+            controlledId = newId;
+          }
+
+          // Ensure the controlled content has an accessible state when JS toggles
+          if (contentEl) {
+            // When JS present, the extra content should be hidden until toggled (CSS handles actual visuals)
+            contentEl.setAttribute('aria-hidden', 'true');
+          }
+
+          // Toggle function
+          var setExpanded = function (expanded) {
+            expanded = !!expanded;
+            toggle.setAttribute('aria-expanded', String(expanded));
+            if (contentEl) {
+              contentEl.setAttribute('aria-hidden', String(!expanded));
+            }
+            card.classList.toggle('is-expanded', expanded);
+          };
+
+          // Start collapsed for accessibility (if JS is enabled)
+          setExpanded(false);
+
+          // Click handler on toggle
+          toggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            var isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+            setExpanded(!isExpanded);
+            // keep focus on the toggle (good for keyboard users)
+            try { toggle.focus(); } catch (err) { /* ignore */ }
+          });
+
+          // Keyboard activation: Enter and Space already handled by native button but add Space handling if needed
+          toggle.addEventListener('keydown', function (e) {
+            if (e.key === ' ' || e.key === 'Spacebar') {
+              // prevent page scroll on space
+              e.preventDefault();
+              toggle.click();
+            }
+          });
+
+          // Allow clicking the card to toggle (but ignore clicks on links and the toggle itself)
+          card.addEventListener('click', function (e) {
+            var target = e.target;
+            if (target.closest('a') || target.closest('button')) { return; }
+            // If click is on interactive element (input etc.) skip
+            if (target.closest('input, select, textarea')) { return; }
+            // Toggle on whole-card click (convenient for touch)
+            var isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+            setExpanded(!isExpanded);
+          });
+
+          // Keyboard: make the card reachable via keyboard by adding tabindex if not present and ensure semantics
+          if (!card.hasAttribute('tabindex')) {
+            card.setAttribute('tabindex', '0');
+          }
+          card.addEventListener('keydown', function (e) {
+            // Enter or Space toggles the card
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggle.click();
+            }
+          });
+
+        }); // forEach end
+      }); // onDom end
+    }());
+  </script>
+
+  <!-- Defensive capture-phase click handler:
+       If any global script attempts to block navigation for normal .html anchors,
+       this handler will perform programmatic navigation for links pointing to .html files
+       (including privacy.html and terms.html) to guarantee users can reach legal pages.
+       It runs at capture phase and immediately navigates (respecting target="_blank").
+  -->
+  <script>
+    (function () {
+      'use strict';
+      // Only run in browsers supporting necessary APIs
+      if (!document.addEventListener) { return; }
+
+      document.addEventListener('click', function (ev) {
+        try {
+          var target = ev.target;
+          // find nearest anchor element
+          while (target && target.nodeName !== 'A') {
+            target = target.parentElement;
+          }
+          if (!target || !target.getAttribute) { return; }
+
+          var href = target.getAttribute('href') || '';
+          // Normalize whitespace
+          href = href.trim();
+
+          // Skip if href is empty or JavaScript pseudo-protocol
+          if (!href || href.indexOf('javascript:') === 0) { return; }
+
+          // Only intercept navigation to HTML pages (relative or absolute) within same origin
+          // Examples: "privacy.html", "terms.html", "about.html#team", "/terms.html", "https://example.com/terms.html"
+          var isHtmlLink = /\.html(?:$|#|[?])/i.test(href);
+          if (!isHtmlLink) { return; }
+
+          // Allow mailto/tel links to behave normally
+          if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) { return; }
+
+          // At this point, perform navigation programmatically to ensure it occurs even if other scripts prevent default.
+          // Respect target attribute
+          var targetWindow = target.getAttribute('target') || null;
+          var rel = (target.getAttribute('rel') || '').split(/\s+/).filter(Boolean).join(' ') || '';
+
+          // If the link is an absolute URL with a different origin, let it proceed normally (do not intercept cross-origin)
+          var anchor = document.createElement('a');
+          anchor.href = href;
+          if (anchor.hostname && anchor.hostname !== location.hostname) {
+            // cross-origin; do not intercept (let default behavior or other scripts handle it)
+            return;
+          }
+
+          // Prevent other handlers and default behavior, then navigate
+          ev.preventDefault();
+          ev.stopImmediatePropagation();
+
+          // For _blank, open in a new tab/window
+          if (targetWindow === '_blank') {
+            // prefer noopener for security/sanity
+            try {
+              window.open(anchor.href, '_blank', 'noopener');
+            } catch (err) {
+              // fallback to location assignment (rare)
+              window.location.href = anchor.href;
+            }
+            return;
+          }
+
+          // For same-window navigation, set location
+          // Use location.assign to preserve history semantics
+          window.location.assign(anchor.href);
+
+        } catch (err) {
+          // swallow exceptions to avoid breaking page if unexpected
+          if (window.console && console.warn) { console.warn('Nav guard error:', err); }
+        }
+      }, true); // capture-phase listener
+    }());
+  </script>
+
   <!-- Shared script (defensive hooks + page initializers).
-       script.js contains initDemoBlocks() and other initializers and is loaded deferred. -->
+       script.js contains additional site behavior and is loaded deferred. -->
   <script defer src="script.js" id="site-script"></script>
 </body>
 </html>
