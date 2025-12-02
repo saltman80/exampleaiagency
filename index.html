@@ -241,8 +241,8 @@
             <li class="nav-item"><a class="nav-link" href="demo.html" data-js="nav-link" data-nav-link>Demo</a></li>
             <li class="nav-item"><a class="nav-link" href="what-we-do.html" data-js="nav-link" data-nav-link>What we do</a></li>
             <li class="nav-item"><a class="nav-link" href="#services" data-js="nav-link" data-nav-link>Services</a></li>
-            <!-- Use an internal anchor to the contact section to avoid broken external pages -->
-            <li class="nav-item"><a class="nav-link" href="index.html#contact" data-js="nav-link" data-nav-link>Contact</a></li>
+            <!-- Updated to dedicated contact page for discoverability -->
+            <li class="nav-item"><a class="nav-link" href="contact.html" data-js="nav-link" data-nav-link aria-label="Contact page">Contact</a></li>
           </ul>
         </div>
       </nav>
@@ -329,7 +329,7 @@
               <span>Remote-friendly</span>
             </div>
 
-            <a class="service-cta" href="#contact" aria-label="Example: Learn more about Prototyping">Example: Learn more</a>
+            <a class="service-cta" href="contact.html" aria-label="Example: Learn more about Prototyping">Example: Learn more</a>
           </article>
 
           <article class="service-card" role="listitem" id="svc-2" aria-labelledby="svc-2-title" data-service="strategy">
@@ -422,7 +422,8 @@
       </div>
     </section>
 
-    <!-- Contact section added to resolve broken '#contact' anchors -->
+    <!-- Contact section added to resolve broken '#contact' anchors (kept as local section for homepage visitors).
+         Note: site-wide navigation now points to contact.html (a dedicated presentational page). -->
     <section class="contact" id="contact" aria-labelledby="contact-title" data-section="contact">
       <div class="container">
         <h2 id="contact-title" class="section__title">Get in touch</h2>
@@ -465,6 +466,7 @@
           <li><a href="demo.html" class="footer-nav__link">Demo</a></li>
           <li><a href="what-we-do.html" class="footer-nav__link">What we do</a></li>
           <li><a href="#services" class="footer-nav__link">Services</a></li>
+          <li><a href="contact.html" class="footer-nav__link" aria-label="Contact page">Contact</a></li>
           <!-- Updated to relative legal pages (privacy.html and terms.html) per project plan -->
           <li>
             <a href="privacy.html" class="footer-nav__link" aria-label="Privacy policy">Privacy</a>
@@ -714,6 +716,8 @@
        this handler will perform programmatic navigation for links pointing to .html files
        (including privacy.html and terms.html) to guarantee users can reach legal pages.
        It runs at capture phase and immediately navigates (respecting target="_blank").
+       Note: intentionally does NOT call stopImmediatePropagation to avoid interfering
+       with other non-navigation handlers; it prevents default and performs navigation when safe.
   -->
   <script>
     (function () {
@@ -758,9 +762,8 @@
             return;
           }
 
-          // Prevent other handlers and default behavior, then navigate
+          // Prevent default and navigate programmatically. Avoid stopImmediatePropagation to keep other handlers intact.
           ev.preventDefault();
-          ev.stopImmediatePropagation();
 
           // For _blank, open in a new tab/window
           if (targetWindow === '_blank') {

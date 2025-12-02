@@ -222,6 +222,13 @@
     }
     .demo-block__cta:active{ transform: translateY(0); }
 
+    /* Fallback focus-visible class used by small inline script for broader browser support */
+    .demo-block__cta.focus--visible {
+      outline: var(--focus-ring);
+      outline-offset: 3px;
+      border-radius: 10px;
+    }
+
     /* media / placeholder */
     .demo-block__media{
       width:160px;
@@ -296,7 +303,7 @@
       <a href="about.html">About</a>
       <a href="what-we-do.html">What we do</a>
       <a href="demo.html" aria-current="page">Demo</a>
-      <a href="https://example.com/contact" target="_blank" rel="noopener noreferrer">Contact</a>
+      <a href="contact.html">Contact</a>
     </nav>
   </header>
 
@@ -314,8 +321,8 @@
         <div class="demo-block__meta">
           <h2 id="demo-1-title" class="demo-block__title">Realtime Data Stream</h2>
           <p id="demo-1-desc" class="demo-block__desc">(Example) Observe a simulated realtime data stream and explore visualizations that adapt to live input. Great for dashboards and monitoring interfaces.</p>
-          <!-- CTA includes multiple data attributes and both class names to be resilient to script selector variations -->
-          <a href="#" class="demo-block__cta demo-cta" data-demo-id="realtime-stream" data-demo="realtime-stream" role="button" aria-describedby="demo-1-desc">Open demo</a>
+          <!-- CTA includes explicit accessibility attributes to reduce reliance on JS initialization -->
+          <a href="#" class="demo-block__cta demo-cta" data-demo-id="realtime-stream" data-demo="realtime-stream" role="button" aria-describedby="demo-1-desc" aria-pressed="false" tabindex="0">Open demo</a>
         </div>
 
         <div class="demo-block__media" role="img" aria-label="Placeholder visualization for realtime data stream">
@@ -336,7 +343,7 @@
         <div class="demo-block__meta">
           <h2 id="demo-2-title" class="demo-block__title">Interactive Layout Builder</h2>
           <p id="demo-2-desc" class="demo-block__desc">(Example) Compose layouts with drag-and-drop primitives and responsive presets. Useful when prototyping page structures or building templates quickly.</p>
-          <a href="#" class="demo-block__cta demo-cta" data-demo-id="layout-builder" data-demo="layout-builder" role="button" aria-describedby="demo-2-desc">Try it now</a>
+          <a href="#" class="demo-block__cta demo-cta" data-demo-id="layout-builder" data-demo="layout-builder" role="button" aria-describedby="demo-2-desc" aria-pressed="false" tabindex="0">Try it now</a>
         </div>
 
         <div class="demo-block__media" role="img" aria-label="Placeholder for interactive layout builder">
@@ -362,15 +369,17 @@
     <nav aria-label="Footer navigation" class="footer-nav">
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
+      <a href="contact.html">Contact</a>
     </nav>
   </footer>
 
   <script>
     /* Lightweight page-specific JS: feature-detected, small, defensive.
        - Adds .js class to root for JS-dependent CSS (if needed elsewhere)
-       - Small keyboard support for anchors with role="button" (space activates)
+       - Small keyboard support for anchors with role=button (space activates)
        - Sets current year if not already set
-       - Does not replace site-wide app behavior from external script.js
+       - Provides a robust focus-visible fallback (adds .focus--visible when keyboard used)
+       - Does not replace site-wide app behavior from external script.js and remains defensive
     */
     (function(){
       if (!('addEventListener' in window && 'classList' in document.documentElement)) return;
@@ -381,9 +390,8 @@
         var target = e.target;
         if (!target) return;
         if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter'){
-          // Accept Enter (native) and Space (not native for anchors with role=button)
           if (target.matches && target.matches('a[role="button"], [role="button"]')){
-            // Space on anchors should trigger click
+            // Space on anchors should trigger click; Enter is native for links
             if (e.key === ' ' || e.key === 'Spacebar'){
               e.preventDefault();
               target.click();
@@ -403,16 +411,34 @@
 
       // Focus-visible-ish: add a class when keyboard used so we can style if needed
       (function(){
-        var keyboardActive = false;
         function onFirstTab(e){
-          if (e.key === 'Tab' || e.key === 'Shift') {
-            keyboardActive = true;
+          // any keyboard event indicates keyboard interaction for our purposes
+          if (e.key) {
             document.documentElement.classList.add('using-keyboard');
             window.removeEventListener('keydown', onFirstTab, true);
           }
         }
         window.addEventListener('keydown', onFirstTab, true);
       })();
+
+      // Small focus-in/out delegation to toggle .focus--visible on CTAs when keyboard used
+      document.addEventListener('focusin', function(e){
+        var t = e.target;
+        if (!t) return;
+        if (t.matches && t.matches('.demo-block__cta')) {
+          if (document.documentElement.classList.contains('using-keyboard')) {
+            t.classList.add('focus--visible');
+          }
+        }
+      }, true);
+
+      document.addEventListener('focusout', function(e){
+        var t = e.target;
+        if (!t) return;
+        if (t.matches && t.matches('.demo-block__cta')) {
+          t.classList.remove('focus--visible');
+        }
+      }, true);
 
       // Set current year if empty
       try {
@@ -425,17 +451,38 @@
         // silent
       }
 
-      // Small enhancement: add aria-pressed toggle behavior to demo CTAs so assistive tech can reflect "opened" state (defensive, non-breaking)
+      // Small enhancement: add aria-pressed toggle behavior to demo CTAs so assistive tech can reflect "opened" state.
+      // Guarded so it doesn't override other site scripts: only apply if element looks like our local CTA and it's safe to toggle.
       var ctas = document.querySelectorAll('.demo-block__cta');
       Array.prototype.forEach.call(ctas, function(cta){
-        // Skip if already has aria-pressed/expanded semantics from site scripts
+        // If the markup already defines role/tabindex/aria-pressed we respect it; otherwise we set defaults.
         if (!cta.getAttribute('role')) cta.setAttribute('role','button');
         if (!cta.hasAttribute('tabindex')) cta.setAttribute('tabindex','0');
+        if (!cta.hasAttribute('aria-pressed')) cta.setAttribute('aria-pressed','false');
 
         cta.addEventListener('click', function(e){
-          // Example: toggle aria-pressed for local UX ? doesn't change navigation behavior
-          var pressed = cta.getAttribute('aria-pressed') === 'true';
-          cta.setAttribute('aria-pressed', String(!pressed));
+          // Toggle aria-pressed for local UX ? doesn't perform navigation by itself.
+          // Guard: only toggle if CTA href is '#' or JS intends to handle it; do not interfere with real navigation
+          try {
+            var href = cta.getAttribute('href') || '';
+            if (href.trim() === '#' || cta.dataset.demo) {
+              e.preventDefault();
+              var pressed = cta.getAttribute('aria-pressed') === 'true';
+              cta.setAttribute('aria-pressed', String(!pressed));
+              // Simple visual feedback for keyboard users
+              if (document.documentElement.classList.contains('using-keyboard')) {
+                cta.classList.add('focus--visible');
+                setTimeout(function(){ cta.classList.remove('focus--visible'); }, 800);
+              }
+              // Dispatch a small non-blocking custom event so site-level scripts (if present) can react
+              var ev = new CustomEvent('demo:toggle', { bubbles: true, detail: { demoId: cta.dataset.demoId || cta.dataset.demo } });
+              cta.dispatchEvent(ev);
+            } else {
+              // Let normal navigation occur for anchors with real hrefs
+            }
+          } catch (err) {
+            // be defensive and silent
+          }
         }, false);
       });
     })();
