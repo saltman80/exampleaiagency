@@ -1,17 +1,19 @@
 /**
  * script.js
  *
- * Component: SiteNav + Demo blocks initializer
+ * Component: SiteNav + Demo blocks initializer + Service Cards toggles
  * Purpose:
  *  - Provide a minimal, robust, and accessible navigation behavior for a tiny static site.
  *  - Provide a small demo initializer (initDemoBlocks) to wire demo CTAs, keyboard accessibility,
  *    and an accessible modal placeholder for demos.
+ *  - Provide interactive service cards on what-we-do.html with graceful degradation when JS is off.
  *
  * Responsibilities:
  *  - Mobile navigation toggle (open/close nav).
- *  - Highlight the active navigation link based on the current location.
+ *  - Highlight the active navigation link based on the current location (respect author-set aria-current).
  *  - Provide a simple public API for init, destroy, toggleNav, and highlightActiveLink.
  *  - Provide initDemoBlocks() and modal utilities for the demo page.
+ *  - Initialize service-card expand/collapse toggles when JS is available.
  *
  * Acceptance criteria:
  *  - Works without breaking markup if JS is disabled (graceful degradation).
@@ -27,6 +29,7 @@
  *  - toggleNav(force): open/close nav; optional boolean to explicitly set state.
  *  - highlightActiveLink(opts): re-scan nav links and mark the active one(s).
  *  - initDemoBlocks(): initialize demo CTAs & modal behavior
+ *  - initServiceCards(): initialize service-card toggles
  *
  * Notes:
  *  - Defensive wiring for ARIA attributes (do not overwrite author-provided values).
@@ -103,8 +106,11 @@
       modal: null,
       isOpen: false,
       lastActive: null,
-      listeners: [] // { target, type, handler, capture }
-    }
+      listeners: [], // { target, type, handler, capture }
+      _closeTimeoutId: null
+    },
+    // service-card state (records and handlers)
+    _serviceCards: []
   };
 
   /**
@@ -146,11 +152,13 @@
    * Ensure a DOM element has an id. If not, generate a stable-ish one.
    * Returns the id.
    */
+  var idCounter = 0;
   function ensureId(el, prefix) {
     if (!el) return '';
     if (el.id) return el.id;
     prefix = prefix || 'site-nav';
-    var gen = prefix + '-' + Math.random().toString(36).slice(2, 9);
+    idCounter += 1;
+    var gen = prefix + '-' + (Date.now().toString(36).slice(-4)) + '-' + (idCounter);
     el.id = gen;
     return gen;
   }
@@ -228,7 +236,8 @@
       if (!linkEl.classList.contains(c)) linkEl.classList.add(c);
     } catch (e) {}
     try {
-      linkEl.setAttribute('aria-current', 'page');
+      // Only set aria-current if not present, but normalize to 'page' when setting
+      if (!linkEl.hasAttribute('aria-current')) linkEl.setAttribute('aria-current', 'page');
     } catch (e) {
       // ignore in old browsers
     }
@@ -244,7 +253,11 @@
       if (linkEl.classList.contains(c)) linkEl.classList.remove(c);
     } catch (e) {}
     try {
-      linkEl.removeAttribute('aria-current');
+      // Only remove aria-current if we set it (we can't reliably know that), so be conservative:
+      // remove attribute only if its value is 'page' (common auto-set) and not present as something custom.
+      if (linkEl.getAttribute && linkEl.getAttribute('aria-current') === 'page') {
+        linkEl.removeAttribute('aria-current');
+      }
     } catch (e) {
       // ignore
     }
@@ -253,21 +266,46 @@
   /**
    * Highlight active link(s) in the nav.
    * Accepts optional opts for deferred behavior.
+   * Respect author-provided aria-current: if any nav link has aria-current set, preserve it and skip auto-highlighting.
    */
   function highlightActiveLink(opts) {
     opts = opts || {};
     var links = state.elements.links || [];
-    // If we don't have links yet but we have a nav, attempt to collect anchors inside it
-    if ((!links || !links.length) && state.elements.nav) {
-      links = Array.prototype.slice.call(state.elements.nav.querySelectorAll('a[href]') || [], 0);
-      state.elements.links = links;
+    // Prefer nav-scoped links when nav exists
+    if (state.elements.nav) {
+      try {
+        links = Array.prototype.slice.call(state.elements.nav.querySelectorAll('a[href]') || [], 0);
+        state.elements.links = links;
+      } catch (e) {
+        // fallback to existing links
+      }
     }
     if (!links || !links.length) return;
-    // Clear previous marks
-    links.forEach(unmarkLinkActive);
+
+    // Respect author-declared aria-current: if present, do not override site-wide auto-highlighting.
+    var i;
+    var foundAuthorCurrent = false;
+    for (i = 0; i < links.length; i++) {
+      try {
+        if (links[i].hasAttribute && links[i].hasAttribute('aria-current')) {
+          // Ensure it has the active class as well
+          markLinkActive(links[i]);
+          foundAuthorCurrent = true;
+        }
+      } catch (e) {}
+    }
+    if (foundAuthorCurrent) {
+      return;
+    }
+
+    // Clear previous marks that we might have set
+    for (i = 0; i < links.length; i++) {
+      unmarkLinkActive(links[i]);
+    }
+
     // Run detection
     var matched = [];
-    for (var i = 0; i < links.length; i++) {
+    for (i = 0; i < links.length; i++) {
       try {
         if (linkMatchesLocation(links[i])) {
           matched.push(links[i]);
@@ -295,12 +333,12 @@
 
   /**
    * Update any year placeholders in the page.
-   * Targets elements matching [data-year] and #current-year.
+   * Targets elements matching [data-year], #current-year, and #year.
    */
   function updateCurrentYear() {
     try {
       var year = String((new Date()).getFullYear());
-      var els = safeQueryAll('[data-year], #current-year');
+      var els = safeQueryAll('[data-year], #current-year, #year');
       if (!els || !els.length) return;
       for (var i = 0; i < els.length; i++) {
         try {
@@ -531,6 +569,84 @@
   }
 
   /**
+   * Find closest anchor from an element (cross-browser fallback).
+   */
+  function findClosestAnchor(el) {
+    var cur = el;
+    while (cur && cur !== document) {
+      try {
+        if (cur.tagName && cur.tagName.toLowerCase() === 'a') return cur;
+      } catch (e) {}
+      cur = cur.parentNode;
+    }
+    return null;
+  }
+
+  /**
+   * Delegated document click handler for SPA/hijacked links.
+   * Only prevents default for links that explicitly request hijacking (data-hijack/data-spa/data-ajax)
+   * or other custom patterns. Crucially: normal .html links (privacy.html, terms.html) are not blocked.
+   */
+  function delegatedLinkHandler(e) {
+    if (!e || !e.target) return;
+    // Only care about left-button clicks without modifier keys
+    if (e.button && e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    var anchor = (e.target.closest && e.target.closest('a')) || findClosestAnchor(e.target);
+    if (!anchor || !anchor.getAttribute) return;
+
+    // If anchor explicitly opts into hijack, we will handle it. Otherwise allow normal navigation.
+    var dataset = anchor.dataset || {};
+    var wantsHijack = dataset.hijack === 'true' || dataset.spa === 'true' || anchor.hasAttribute('data-ajax') || anchor.hasAttribute('data-hijack');
+
+    // If anchor appears to point to a .html page (explicit file) ? allow default navigation to proceed.
+    var href = anchor.getAttribute('href') || '';
+    if (typeof href === 'string') {
+      // Normalize whitespace
+      href = href.trim();
+      // If it's an external link or a mailto/tel, do nothing.
+      if (/^\s*(mailto:|tel:|javascript:)/i.test(href)) return;
+      // If it contains privacy.html or terms.html or ends with .html, allow normal navigation
+      if (/\b(privacy|terms)\.html\b/i.test(href) || /\.html(?:$|[?#])/i.test(href)) {
+        // Allow default navigation for real file links
+        return;
+      }
+    }
+
+    if (!wantsHijack) {
+      // Nothing to do: don't block anchors, allow default navigation for fragments, routes, anchors.
+      return;
+    }
+
+    // If we reach here, anchor requests hijack: prevent default and handle programmatically.
+    if (e.preventDefault) e.preventDefault();
+    try {
+      // If href is present and not a fragment, fallback to programmatic navigation for SPA-like behavior
+      if (href && href.indexOf('#') !== 0) {
+        window.location.href = href;
+      } else if (href && href.indexOf('#') === 0) {
+        // navigate to fragment within the page
+        var id = href.slice(1);
+        try {
+          var dest = document.getElementById(id);
+          if (dest && typeof dest.scrollIntoView === 'function') {
+            dest.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // update hash without adding a history entry
+            try { history.replaceState && history.replaceState(null, '', href); } catch (e) {}
+          } else {
+            window.location.hash = href;
+          }
+        } catch (e) {
+          window.location.hash = href;
+        }
+      }
+    } catch (e) {
+      // If anything fails, do not crash.
+    }
+  }
+
+  /**
    * Initialize: find elements, set ARIA defaults, attach listeners.
    * Options may override selectors and classes.
    */
@@ -550,11 +666,17 @@
     // Query DOM via safe helpers with tolerant selectors
     var nav = safeQuerySelector(state.config.selectors.nav);
     var toggles = safeQueryAll(state.config.selectors.navToggle);
-    var links = safeQueryAll(state.config.selectors.navLinks);
 
-    // If links not found globally, try to find inside nav
-    if ((!links || !links.length) && nav) {
-      links = Array.prototype.slice.call(nav.querySelectorAll('a[href]') || [], 0);
+    // Prefer nav-scoped links to avoid marking unrelated links
+    var links = [];
+    if (nav) {
+      try {
+        links = Array.prototype.slice.call(nav.querySelectorAll('a[href]') || [], 0);
+      } catch (e) {
+        links = safeQueryAll(state.config.selectors.navLinks);
+      }
+    } else {
+      links = safeQueryAll(state.config.selectors.navLinks);
     }
 
     state.elements.nav = nav;
@@ -636,8 +758,27 @@
     // Click outside to close (passive true is fine)
     attachListener(document, 'click', onDocumentClick, { passive: true });
 
+    // Add a delegated link handler to support opt-in SPA/hijack links while ensuring .html links are not blocked
+    attachListener(document, 'click', delegatedLinkHandler, false);
+
     // Update any year placeholders
     updateCurrentYear();
+
+    // Add a root class to mark JS presence (used by CSS to hide/show enhanced parts)
+    try {
+      if ('classList' in document.documentElement && document.documentElement.classList) {
+        if (!document.documentElement.classList.contains('js')) {
+          document.documentElement.classList.add('js');
+        }
+      }
+    } catch (e) {}
+
+    // Initialize service cards (enhanced only when environment supports required features)
+    try {
+      initServiceCards();
+    } catch (e) {
+      // swallow - progressive enhancement
+    }
 
     // Highlight active link - defer if possible and record IDs for cleanup
     try {
@@ -789,8 +930,67 @@
     state._idleId = null;
     state._timeoutId = null;
 
+    // Clear any demo close timeout
+    try {
+      if (state._demo && state._demo._closeTimeoutId) {
+        clearTimeout(state._demo._closeTimeoutId);
+        state._demo._closeTimeoutId = null;
+      }
+    } catch (e) {}
+
     // Remove listeners
     removeAllListeners();
+
+    // Restore service card attributes and remove expanded state
+    try {
+      if (state._serviceCards && state._serviceCards.length) {
+        state._serviceCards.forEach(function (rec) {
+          var card = rec.el;
+          var toggle = rec.toggle;
+          var attrs = rec.attrs || {};
+          try { if (card && card.classList) card.classList.remove('is-expanded'); } catch (e) {}
+          if (toggle) {
+            try {
+              if (attrs.role === null || attrs.role === undefined) {
+                if (toggle.getAttribute && toggle.getAttribute('role') === 'button' && toggle.tagName.toLowerCase() !== 'button') {
+                  toggle.removeAttribute('role');
+                }
+              } else {
+                toggle.setAttribute('role', attrs.role);
+              }
+            } catch (e) {}
+            try {
+              if (attrs.tabIndex === null || attrs.tabIndex === undefined) {
+                if (toggle.hasAttribute && toggle.hasAttribute('tabindex')) toggle.removeAttribute('tabindex');
+              } else {
+                toggle.setAttribute('tabindex', attrs.tabIndex);
+              }
+            } catch (e) {}
+            try {
+              if (attrs.ariaExpanded === null || attrs.ariaExpanded === undefined) {
+                toggle.removeAttribute('aria-expanded');
+              } else {
+                toggle.setAttribute('aria-expanded', attrs.ariaExpanded);
+              }
+            } catch (e) {}
+            try {
+              if (attrs.ariaControls === null || attrs.ariaControls === undefined) {
+                if (toggle.hasAttribute && toggle.hasAttribute('aria-controls')) toggle.removeAttribute('aria-controls');
+              } else {
+                toggle.setAttribute('aria-controls', attrs.ariaControls);
+              }
+            } catch (e) {}
+            // Ensure any 'more' elements have aria-hidden removed (graceful degradation)
+            try {
+              var more = safeQuerySelectorWithin(card, '.service-desc--more');
+              if (more) {
+                more.removeAttribute('aria-hidden');
+              }
+            } catch (e) {}
+          }
+        });
+      }
+    } catch (e) {}
 
     // Remove body open class if set
     try {
@@ -804,6 +1004,7 @@
     state.isOpen = false;
     state.elements = { nav: null, panel: null, toggles: [], links: [] };
     state._original = { nav: {}, panel: {}, toggles: [] };
+    state._serviceCards = [];
 
     // Clear initialization handshake flag
     try {
@@ -849,22 +1050,25 @@
   function buildDemoModal(demoId) {
     // Build overlay and dialog structure
     var overlay = document.createElement('div');
-    overlay.className = 'demo-modal-overlay';
+    // Add both a generic modal class and a demo-specific class for CSS compatibility
+    overlay.className = 'modal-overlay demo-modal-overlay';
     overlay.setAttribute('data-demo-modal', demoId || '');
     overlay.style.zIndex = 10000;
+    overlay.setAttribute('role', 'presentation');
 
     var dialog = document.createElement('div');
-    dialog.className = 'demo-modal';
+    // Add both generic modal-content/dialog classes and demo-specific class
+    dialog.className = 'modal-content demo-modal';
     // ID for labeling
     var titleId = 'demo-modal-title-' + (demoId || Math.random().toString(36).slice(2, 6));
     dialog.setAttribute('role', 'dialog');
     dialog.setAttribute('aria-modal', 'true');
     dialog.setAttribute('aria-labelledby', titleId);
-    dialog.tabIndex = -1;
+    dialog.setAttribute('tabindex', '-1');
 
-    // Visual wrapper
+    // Visual wrapper (body)
     var content = document.createElement('div');
-    content.className = 'demo-modal-content';
+    content.className = 'modal-body demo-modal-content';
 
     var title = document.createElement('h2');
     title.id = titleId;
@@ -879,7 +1083,7 @@
     actions.className = 'demo-modal-actions';
 
     var closeBtn = document.createElement('button');
-    closeBtn.className = 'demo-modal-close';
+    closeBtn.className = 'modal-close demo-modal-close';
     closeBtn.type = 'button';
     closeBtn.textContent = 'Close demo';
     closeBtn.setAttribute('aria-label', 'Close demo dialog');
@@ -903,7 +1107,7 @@
   function openDemoModal(demoId, opener) {
     // If modal already open, close first
     if (state._demo && state._demo.isOpen) {
-      closeDemoModal();
+      closeDemoModal(true);
     }
     // build modal
     var m = buildDemoModal(demoId);
@@ -928,6 +1132,16 @@
     // Add body class for modal open (styles can use .modal-open)
     try { document.body.classList.add('modal-open'); } catch (e) {}
 
+    // Make overlay visible by adding is-open class (use RAF to allow CSS transitions)
+    try {
+      // ensure element is in DOM and next frame add class
+      window.requestAnimationFrame(function () {
+        try { m.overlay.classList.add('is-open'); } catch (e) {}
+      });
+    } catch (e) {
+      try { m.overlay.classList.add('is-open'); } catch (e) {}
+    }
+
     // Focus management: focus close button after slight delay
     window.setTimeout(function () {
       try { m.closeBtn.focus(); } catch (e) {}
@@ -949,7 +1163,7 @@
         closeDemoModal();
         return;
       }
-      if (code === 'Tab' || code === 9 || code === 'Tab') {
+      if (code === 'Tab' || code === 9) {
         // trap focus inside modal
         var focusables = getFocusableElements(m.dialog);
         if (!focusables || !focusables.length) {
@@ -997,10 +1211,28 @@
     // Remove body modal class
     try { document.body.classList.remove('modal-open'); } catch (e) {}
 
-    // Remove modal DOM
+    // If overlay exists, remove open class then remove DOM after short delay to allow CSS animate out
     try {
-      if (m && m.overlay && m.overlay.parentNode) {
-        m.overlay.parentNode.removeChild(m.overlay);
+      if (m && m.overlay) {
+        try { m.overlay.classList.remove('is-open'); } catch (e) {}
+        // clear any previous timeout
+        if (state._demo && state._demo._closeTimeoutId) {
+          try { clearTimeout(state._demo._closeTimeoutId); } catch (e) {}
+          state._demo._closeTimeoutId = null;
+        }
+        // Remove element after 180ms (animation friendly). If forceRemove, remove immediately.
+        if (forceRemove) {
+          try {
+            if (m.overlay.parentNode) m.overlay.parentNode.removeChild(m.overlay);
+          } catch (e) {}
+        } else {
+          state._demo._closeTimeoutId = setTimeout(function () {
+            try {
+              if (m.overlay && m.overlay.parentNode) m.overlay.parentNode.removeChild(m.overlay);
+            } catch (e) {}
+            state._demo._closeTimeoutId = null;
+          }, 180);
+        }
       }
     } catch (e) {}
 
@@ -1031,20 +1263,62 @@
 
   /**
    * Demo CTA handlers + initializer
-   * - Attaches click and keyboard handlers to .demo-cta
+   * - Attaches click and keyboard handlers to .demo-block__cta and .demo-cta (fallback)
    * - Builds and opens accessible modal placeholder for demos
    */
   function onDemoCtaClick(e) {
     if (!e) return;
     var btn = e.currentTarget || e.target;
     if (!btn) return;
-    var demoId = btn.getAttribute('data-demo') || (btn.dataset && btn.dataset.demo) || '';
-    // Prefer modal for view demos
+    // Determine demo id from multiple possible attributes
+    var demoId = '';
+    try {
+      // data-demo-id preferred, then data-demo, then dataset.demoId/dataset.demo
+      demoId = btn.getAttribute('data-demo-id') || btn.getAttribute('data-demo') || (btn.dataset && (btn.dataset.demoId || btn.dataset.demo)) || '';
+    } catch (err) {
+      demoId = '';
+    }
+
+    // If this is an anchor, decide whether to prevent its navigation.
+    // Allow navigation to .html pages (privacy/terms etc). Prevent for demo interactive CTAs that should open the modal.
+    try {
+      if (btn.tagName && btn.tagName.toLowerCase() === 'a') {
+        var href = btn.getAttribute('href') || '';
+        var shouldAllowNav = false;
+        try {
+          if (/\b(privacy|terms)\.html\b/i.test(href) || /\.html(?:$|[?#])/i.test(href)) {
+            shouldAllowNav = true;
+          }
+        } catch (e) { shouldAllowNav = false; }
+        if (!shouldAllowNav) {
+          // Prevent navigation in all cases for demo CTAs to keep the demo interaction on page
+          if (e.preventDefault) e.preventDefault();
+        }
+      }
+    } catch (ex) {}
+
+    // Analytics hook + event dispatch
+    try {
+      if (window && window.console && window.console.log) {
+        window.console.log('Demo CTA clicked:', demoId || '(no id)'); // dev log
+      }
+      if (typeof window !== 'undefined' && window.analytics && typeof window.analytics.trackDemoClick === 'function') {
+        try { window.analytics.trackDemoClick({ id: demoId }); } catch (e) {}
+      }
+    } catch (e) {}
+
+    // Dispatch a custom event for other scripts to handle
+    try {
+      var ev = new CustomEvent('demo:click', { detail: { id: demoId, source: btn } });
+      (btn && btn.dispatchEvent) && btn.dispatchEvent(ev);
+    } catch (e) {}
+
+    // Open a modal placeholder for demo content (with focus handling)
     try {
       openDemoModal(demoId, btn);
     } catch (err) {
       // Fallback: at least log
-      try { console.log('Open demo', demoId); } catch (e2) {}
+      try { console.log('Open demo fallback:', demoId); } catch (e2) {}
     }
   }
 
@@ -1057,12 +1331,26 @@
   }
 
   function initDemoBlocks() {
-    // Defensive: don't run if no DOM
+    // Run only on pages that contain the demo page root to avoid cross-page leakage
     if (typeof document === 'undefined') return;
-    var ctas = safeQueryAll('.demo-cta');
+    var demoRoot = document.querySelector('.demo-page');
+    // If demoRoot is not present, still support scattered demo blocks by searching whole document,
+    // but prefer to early-return to avoid attaching handlers site-wide unexpectedly.
+    if (!demoRoot) {
+      // No demo page root: look for any demo-block__cta elements but be conservative: only initialize if present
+      var fallbackCtas = safeQueryAll('.demo-block__cta, .demo-cta');
+      if (!fallbackCtas || !fallbackCtas.length) return;
+      // limit scope to document in this fallback case
+    }
+
+    // Find CTA elements within the demo root (or globally if root is absent)
+    var ctaSelector = '.demo-block__cta, .demo-cta';
+    var ctas = demoRoot ? Array.prototype.slice.call(demoRoot.querySelectorAll(ctaSelector) || [], 0) : safeQueryAll(ctaSelector);
     if (!ctas || !ctas.length) return;
+
     // Clean up any previous demo listeners if present
     removeDemoListeners();
+
     // Attach handlers
     for (var i = 0; i < ctas.length; i++) {
       var btn = ctas[i];
@@ -1074,6 +1362,13 @@
         }
         // Aria hint
         try { if (!btn.hasAttribute('aria-haspopup')) btn.setAttribute('aria-haspopup', 'dialog'); } catch (e) {}
+        // Ensure a label for screen readers if none present (preserve visible text)
+        try {
+          if (!btn.getAttribute('aria-label') && btn.textContent && btn.textContent.trim().length < 60) {
+            var txt = btn.textContent.trim();
+            btn.setAttribute('aria-label', txt);
+          }
+        } catch (e) {}
       } catch (e) {}
       addDemoListener(btn, 'click', onDemoCtaClick, false);
       addDemoListener(btn, 'keydown', onDemoCtaKeydown, false);
@@ -1081,39 +1376,7 @@
   }
 
   /**
-   * Public object returned by the module.
-   */
-  var api = {
-    init: init,
-    destroy: destroy,
-    toggleNav: toggleNav,
-    highlightActiveLink: highlightActiveLink,
-    // Demo initializer
-    initDemoBlocks: initDemoBlocks,
-    // Expose internals for testing/debugging in dev mode only
-    _state: state,
-    _defaults: DEFAULTS
-  };
-
-  // Initialize once on DOMContentLoaded automatically (defensive)
-  try {
-    // If a prior script has already declared ready, still attempt to run demo init when DOM ready,
-    // but avoid re-running nav init unless explicit options are provided.
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function onDomLoaded() {
-        document.removeEventListener('DOMContentLoaded', onDomLoaded);
-        // Intentionally silent if elements missing (graceful degradation)
-        try { api.init(); } catch (e) { /* swallow */ }
-        try { api.initDemoBlocks(); } catch (e) { /* swallow */ }
-      }, { passive: true });
-    } else {
-      // DOM already ready
-      try { api.init(); } catch (e) { /* swallow */ }
-      try { api.initDemoBlocks(); } catch (e) { /* swallow */ }
-    }
-  } catch (e) {
-    // If addEventListener or document is not available, no-op
-  }
-
-  return api;
-}));
+   * Service-card toggles (graceful enhancement)
+   *
+   * Behavior:
+   *  - When JS is
