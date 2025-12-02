@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="index,follow" />
+  <title>About ? Example AI Agency</title>
+  <meta name="description" content="About Example AI Agency ? a minimal, modern AI agency prototype demonstrating accessible, responsive patterns." />
+  <link rel="canonical" href="https://example.com/about.html" />
+  <meta property="og:title" content="About ? Example AI Agency" />
+  <meta property="og:description" content="About Example AI Agency ? a minimal, modern AI agency prototype demonstrating accessible, responsive patterns." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0f1724" />
+  <!-- Shared stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Minimal in-html fallback styles to ensure the page remains styled even if external CSS is missing.
+       These are intentionally small; the main stylesheet (styles.css) should provide the full design tokens and rules. */
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7c5cff; --glass: rgba(255,255,255,0.04);
+      --radius:12px; --gap:1.25rem; --max-width:1080px; --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    html,body{height:100%}
+    body{
+      margin:0; background:linear-gradient(180deg,#071021 0%,#0f1724 100%); color:#e6eef8;
+      font-family:var(--font-family); -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale; line-height:1.45; padding:0 1rem;
+    }
+    a{color:var(--accent); text-decoration:none;}
+    a:focus{outline:3px solid rgba(124,92,255,0.25); outline-offset:3px}
+    header.site-header{max-width:var(--max-width); margin:0 auto; padding:1rem 0; display:flex; align-items:center; gap:1rem;}
+    .brand{display:flex; align-items:center; gap:.75rem;}
+    .brand__logo{width:44px; height:44px; background:linear-gradient(135deg,#7c5cff,#4cc9f0); border-radius:10px; display:inline-block;}
+    .brand__title{font-weight:700; font-size:1.05rem; color:inherit}
+    nav.primary{margin-left:auto;}
+    .nav-list{list-style:none; margin:0; padding:0; display:flex; gap:1rem; align-items:center;}
+    .nav-link{padding:.35rem .6rem; border-radius:8px; color:inherit; font-weight:600;}
+    .nav-link[aria-current="page"]{background:var(--glass); box-shadow:0 6px 18px rgba(2,6,23,0.6);}
+    .nav-toggle{display:none; background:transparent; border:1px solid rgba(255,255,255,0.06); padding:.5rem; border-radius:8px; color:inherit;}
+    main.site-main{max-width:var(--max-width); margin:1.5rem auto; display:grid; gap:var(--gap); align-items:start;}
+    .hero{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:2rem; border-radius:14px; box-shadow:0 10px 30px rgba(2,6,23,0.6);}
+    .hero h1{margin:0 0 .5rem; font-size:1.6rem}
+    .hero p{margin:0 0 1rem; color:var(--muted)}
+    .grid{display:grid; gap:1rem;}
+    .card{background:rgba(255,255,255,0.02); padding:1rem; border-radius:12px; box-shadow:0 8px 20px rgba(2,6,23,0.5)}
+    footer.site-footer{max-width:var(--max-width); margin:2rem auto 3rem; padding:1rem 0; color:var(--muted); display:flex; justify-content:space-between; align-items:center;}
+    .visually-hidden{position:absolute!important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap;}
+
+    /* Skip link: visually hidden by default, revealed on keyboard focus */
+    .skip-link{
+      position:absolute;
+      left:-999px;
+      top:auto;
+      width:1px;
+      height:1px;
+      overflow:hidden;
+    }
+    .skip-link:focus,
+    .skip-link:active{
+      position:fixed;
+      left:1rem;
+      top:1rem;
+      width:auto;
+      height:auto;
+      padding:.5rem 1rem;
+      background:var(--glass);
+      color:inherit;
+      border-radius:8px;
+      z-index:1000;
+      text-decoration:none;
+    }
+
+    /* Responsive */
+    @media (max-width:720px){
+      header.site-header{padding:.5rem 0}
+      .nav-list{position:fixed; right:1rem; top:64px; background:linear-gradient(180deg,#071224,rgba(7,10,18,0.85)); backdrop-filter:blur(6px); border-radius:12px; padding:.75rem; flex-direction:column; display:none; min-width:180px;}
+      .nav-list[data-open="true"]{display:flex}
+      .nav-toggle{display:inline-flex}
+      .brand__title{font-size:1rem}
+    }
+
+    /* Small promo card to draw attention to demo page */
+    .promo {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding:12px;
+      border-radius:12px;
+      background: linear-gradient(90deg, rgba(124,92,255,0.06), rgba(110,231,183,0.03));
+      border:1px solid rgba(255,255,255,0.02);
+      color:var(--color-foreground);
+      box-shadow: 0 8px 24px rgba(2,6,23,0.45);
+    }
+    .promo .btn { padding:8px 12px; font-weight:700; border-radius:10px; }
+    .muted { color:var(--muted); }
+
+    /* small visual polish for lists inside cards */
+    .card ul { margin:0 0 0 1.1rem; }
+  </style>
+  <link rel="author" href="https://example.com/" />
+</head>
+<body class="about-page">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header" role="banner" aria-label="Top header">
+    <div class="brand" id="site-brand">
+      <a href="index.html" class="brand__link" aria-label="Home ? Example AI Agency">
+        <span class="brand__logo" aria-hidden="true"></span>
+      </a>
+      <div>
+        <div class="brand__title">Example AI Agency</div>
+        <div class="brand__tagline" style="font-size:.78rem; color:var(--muted)">Design & AI prototyping</div>
+      </div>
+    </div>
+
+    <nav class="primary site-nav" role="navigation" aria-label="Primary navigation" data-js="nav" aria-controls="primary-nav">
+      <button id="nav-toggle" type="button" class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation" data-js="nav-toggle">
+        <span class="nav-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Toggle navigation</span>
+      </button>
+
+      <ul id="primary-nav" class="nav-list" data-js="nav-list" data-open="false" aria-hidden="true">
+        <li><a href="index.html" class="nav-link" data-js="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link" data-js="nav-link" aria-current="page">About</a></li>
+        <li><a href="demo.html" class="nav-link" data-js="nav-link">Demo</a></li>
+        <li><a href="#work" class="nav-link" data-js="nav-link">Work</a></li>
+        <li><a href="#contact" class="nav-link" data-js="nav-link">Contact</a></li>
+        <li><a href="https://example.com/privacy" class="nav-link" data-js="nav-link" rel="noopener noreferrer" target="_blank">Privacy</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="site-main" role="main">
+    <section class="hero" aria-labelledby="about-hero-title" id="about-hero">
+      <h1 id="about-hero-title">About Example AI Agency</h1>
+      <p class="lede">We explore practical, responsible AI product patterns?combining design craft with engineering rigor to prototype meaningful experiences.</p>
+      <p class="muted">This is a minimal static prototype site intended to demonstrate accessible, responsive patterns for a small agency workflow.</p>
+
+      <!-- Promo calling attention to the Demo page -->
+      <div class="promo" role="region" aria-label="Demo preview">
+        <div style="flex:1">
+          <div style="font-weight:700">See our interactive demos</div>
+          <div style="font-size:.95rem; color:var(--muted)">Try two short prototypes that illustrate our approach to AI UX and product experimentation.</div>
+        </div>
+        <div>
+          <a class="btn" href="demo.html" title="View demos">View demos</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" aria-labelledby="who-we-are" id="who-we-are">
+      <article class="card" role="article" aria-labelledby="who-we-are-title">
+        <h2 id="who-we-are-title">Who we are</h2>
+        <p>We are a small multidisciplinary team focused on product design, machine learning experimentation, and rapid prototyping. Our work emphasizes clarity, accessibility, and pragmatic outcomes.</p>
+        <p><strong>Approach:</strong> research-informed design, iterative prototyping, and collaborative delivery.</p>
+      </article>
+
+      <article class="card" role="article" aria-labelledby="what-we-do">
+        <h2 id="what-we-do">What we do</h2>
+        <ul>
+          <li>AI strategy & product discovery</li>
+          <li>Design systems and interaction design</li>
+          <li>Prototype engineering and data tooling</li>
+        </ul>
+        <p class="muted">We favor small experiments that demonstrate impact quickly and translate to production-ready patterns.</p>
+      </article>
+
+      <aside class="card" role="complementary" aria-labelledby="our-values">
+        <h3 id="our-values">Our values</h3>
+        <ul>
+          <li>Human-centered outcomes</li>
+          <li>Transparent, ethical approaches</li>
+          <li>Craft and clarity over bells and whistles</li>
+        </ul>
+        <p style="font-size:.95rem;">Want to collaborate? Reach out via the contact link below.</p>
+      </aside>
+    </section>
+
+    <section class="card" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Get in touch</h2>
+      <p>For inquiries, partnerships, or a quick chat about ideas, email us at <a href="mailto:hello@example.com">hello@example.com</a> or use the contact form on our <a href="index.html#contact">home page</a>.</p>
+      <p class="muted">This sample site intentionally uses placeholder content for demonstration purposes.</p>
+      <p><a class="btn btn-ghost" href="index.html#contact" data-cta>Contact the team</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <nav aria-label="Footer navigation">
+      <ul style="display:flex; gap:1rem; list-style:none; margin:0; padding:0;">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+    <div style="text-align:right;">
+      <small>&copy; <span id="current-year">2025</span> Example AI Agency. All rights reserved.</small>
+    </div>
+  </footer>
+
+  <script defer>
+    // Inline defensive small script to ensure basic interactive behavior works without external script.
+    (function(){
+      // Update the year (simple, single assignment)
+      var yearEl = document.getElementById('current-year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      // Basic keyboard friendly skip-link focus polyfill for older browsers
+      var skip = document.querySelector('.skip-link');
+      if(skip){
+        skip.addEventListener('click', function(e){
+          var target = document.getElementById('main-content');
+          if(target){
+            target.setAttribute('tabindex', '-1');
+            target.focus();
+            window.setTimeout(function(){ target.removeAttribute('tabindex'); }, 1000);
+          }
+        });
+      }
+    })();
+  </script>
+
+  <script defer>
+    // Tiny inline fallback for navigation toggle and active-link handling.
+    // This fallback will run after window 'load' to allow the shared script (script.js) to initialize first.
+    // NOTE: this sets window.__siteNavFallback so the main script can detect that a light fallback ran.
+    (function(){
+      function initFallback() {
+        try {
+          // Avoid double-initialization of this fallback
+          if (window.__siteNavFallback) return;
+
+          var navToggle = document.getElementById('nav-toggle') || document.querySelector('[data-js="nav-toggle"]');
+          var primaryNav = document.getElementById('primary-nav') || document.querySelector('[data-js="nav-list"], [data-js="nav"], #primary-nav');
+          // Scope nav links to the primary nav to avoid mismarking footer links
+          var navLinks = primaryNav ? primaryNav.querySelectorAll('a') : document.querySelectorAll('[data-js="nav-link"], .nav-link');
+
+          // Toggle mobile nav open state, aria-expanded and body class for simple styling hooks
+          if(navToggle && primaryNav){
+            navToggle.addEventListener('click', function onToggle(){
+              var isOpen = primaryNav.getAttribute('data-open') === 'true';
+              primaryNav.setAttribute('data-open', String(!isOpen));
+              primaryNav.setAttribute('aria-hidden', String(isOpen)); // when open -> aria-hidden=false
+              navToggle.setAttribute('aria-expanded', String(!isOpen));
+              if(!isOpen){
+                document.body.classList.add('nav-open');
+                // focus first visible link for keyboard users
+                window.setTimeout(function(){
+                  try {
+                    var firstLink = primaryNav.querySelector('a, button');
+                    if(firstLink) firstLink.focus();
+                  } catch (e) {}
+                }, 120);
+              } else {
+                document.body.classList.remove('nav-open');
+                try { navToggle.focus(); } catch(e) {}
+              }
+            }, false);
+          }
+
+          // Close nav on link activation (common mobile behavior)
+          if(primaryNav && navLinks && navLinks.length){
+            Array.prototype.forEach.call(navLinks, function(link){
+              link.addEventListener('click', function(){
+                try {
+                  if(primaryNav.getAttribute('data-open') === 'true'){
+                    primaryNav.setAttribute('data-open', 'false');
+                    primaryNav.setAttribute('aria-hidden', 'true');
+                    if(navToggle) navToggle.setAttribute('aria-expanded', 'false');
+                    document.body.classList.remove('nav-open');
+                    if(navToggle) navToggle.focus();
+                  }
+                } catch(err) { /* ignore */ }
+              }, false);
+            });
+          }
+
+          // Active link highlighting based on current location
+          // Only perform highlighting if no nav link already declares aria-current (authoritative)
+          var foundExistingCurrent = false;
+          if(navLinks && navLinks.length){
+            Array.prototype.forEach.call(navLinks, function(link){
+              if(link.hasAttribute && link.hasAttribute('aria-current')){
+                foundExistingCurrent = true;
+              }
+            });
+          }
+
+          if(!foundExistingCurrent && navLinks && navLinks.length){
+            var currentHrefNoHash = window.location.href.split('#')[0];
+            var currentHash = window.location.hash || '';
+            Array.prototype.forEach.call(navLinks, function(link){
+              try {
+                var href = link.getAttribute('href') || '';
+                if(!href) return;
+                // Fragment-only links: mark active only if hash matches exactly
+                if(href.charAt(0) === '#'){
+                  if(href === currentHash && currentHash !== ''){
+                    link.setAttribute('aria-current','page');
+                  }
+                  return;
+                }
+                // Normal links: compare origin+path (ignore fragments)
+                var candidate = (link.href || '').split('#')[0];
+                if(candidate === currentHrefNoHash){
+                  link.setAttribute('aria-current','page');
+                }
+              } catch (innerErr) {
+                // defensive: ignore per-link failures
+              }
+            });
+          }
+
+          // Signal fallback initialized so main script can detect and upgrade where needed.
+          window.__siteNavFallback = true;
+        } catch (err) {
+          // defensive: don't let fallback break the page
+          try { console && console.error && console.error('Nav fallback error', err); } catch (e) {}
+        }
+      }
+
+      // Wait for load so external deferred scripts (script.js) which appear after this inline script
+      // have a chance to set their own marker (e.g., window.__siteNavReady). We avoid blocking them.
+      if (document.readyState === 'complete') {
+        setTimeout(function(){
+          if (!window.__siteNavFallback) initFallback();
+        }, 0);
+      } else {
+        window.addEventListener('load', function(){
+          if (!window.__siteNavFallback) initFallback();
+        }, false);
+      }
+    })();
+  </script>
+
+  <!-- Shared script for navigation behaviors -->
+  <script defer src="script.js"></script>
+</body>
+</html>
