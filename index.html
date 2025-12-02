@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Atlas AI ? Creative AI Agency</title>
+  <meta name="description" content="Atlas AI ? a minimal example AI agency. We craft thoughtful AI-driven experiences and prototypes. Home page with hero, services, and accessible navigation." />
+  <meta name="keywords" content="AI, agency, prototype, services, example" />
+  <link rel="canonical" href="https://example.com/index.html" />
+  <meta property="og:title" content="Atlas AI ? Creative AI Agency" />
+  <meta property="og:description" content="Atlas AI ? a minimal example AI agency demonstrating a modern, accessible static site." />
+  <meta property="og:url" content="https://example.com/index.html" />
+  <meta name="theme-color" content="#0f1724" />
+  <!-- Shared stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Small page-specific polish to make the demo promo stand out.
+       Kept minimal and scoped so global stylesheet remains authoritative. */
+    .promo {
+      margin-top: calc(var(--space-lg) * 0.5);
+      margin-bottom: var(--space-lg);
+    }
+    .promo__card {
+      display:flex;
+      gap:var(--space-md);
+      align-items:center;
+      padding:var(--space-md);
+      border-radius:var(--radius-lg);
+      background: linear-gradient(180deg, rgba(124,92,255,0.06), rgba(110,231,183,0.02));
+      border:1px solid rgba(124,92,255,0.06);
+      box-shadow: 0 8px 30px rgba(2,6,23,0.45);
+    }
+    .promo__media {
+      flex:0 0 160px;
+      width:160px;
+      height:96px;
+      border-radius:10px;
+      background: linear-gradient(135deg, rgba(124,92,255,0.14), rgba(110,231,183,0.06));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--color-foreground);
+      font-weight:700;
+      font-size:0.95rem;
+      text-align:center;
+      box-shadow: inset 0 -8px 24px rgba(0,0,0,0.15);
+    }
+    .promo__body { flex:1 1 auto; min-width:0; }
+    .promo__title { font-size:var(--fs-2); margin-bottom:6px; color:var(--color-foreground); }
+    .promo__desc { color:var(--color-muted); margin-bottom:12px; }
+    .promo__actions { display:flex; gap:10px; align-items:center; }
+    .promo .btn { padding:10px 14px; font-weight:800; border-radius:10px; }
+    @media (max-width:699px){
+      .promo__card { flex-direction:column; align-items:stretch; gap:12px; padding:var(--space-sm); }
+      .promo__media { width:100%; height:140px; border-radius:10px; }
+    }
+  </style>
+</head>
+<body class="page" id="page" data-page="home">
+  <!-- Skip link for keyboard users -->
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header" role="banner" id="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Atlas AI Home">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__name">Atlas AI</span>
+      </a>
+
+      <!-- Navigation: include multiple data- attributes to be resilient to differing script selectors -->
+      <nav
+        class="site-nav"
+        id="siteNav"
+        role="navigation"
+        aria-label="Primary"
+        data-js="nav"
+        data-nav
+        data-open="false"
+      >
+        <button
+          id="navToggle"
+          class="nav-toggle"
+          type="button"
+          aria-controls="site-nav-list"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          data-js="nav-toggle"
+          data-nav-toggle
+        >
+          <span class="nav-icon" aria-hidden="true"></span>
+          <span class="nav-toggle-label">Menu</span>
+        </button>
+
+        <div
+          class="nav-panel"
+          id="site-nav-panel"
+          data-js="nav-panel"
+          data-nav-panel
+          aria-hidden="true"
+        >
+          <ul id="site-nav-list" class="nav-list" data-js="nav-list" data-nav-list>
+            <li class="nav-item"><a class="nav-link nav-link-home" href="index.html" data-js="nav-link" data-nav-link aria-current="page">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html" data-js="nav-link" data-nav-link>About</a></li>
+            <li class="nav-item"><a class="nav-link" href="demo.html" data-js="nav-link" data-nav-link>Demo</a></li>
+            <li class="nav-item"><a class="nav-link" href="#services" data-js="nav-link" data-nav-link>Services</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://example.com/contact" target="_blank" rel="noopener noreferrer" data-external>Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="site-main" tabindex="-1" role="main">
+    <section class="hero" id="hero" aria-labelledby="hero-title" data-section="hero">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <h1 id="hero-title" class="hero__title">
+            We design thoughtful AI experiences.
+          </h1>
+          <p class="hero__lead">
+            Atlas AI is a minimal example agency focusing on human-centered AI prototypes and strategy. We combine design, research, and engineering to build purposeful tools.
+          </p>
+          <p class="hero__actions">
+            <a class="btn" href="#services" data-cta>Explore services</a>
+            <a class="btn btn-ghost" href="about.html" data-cta>Learn more</a>
+          </p>
+        </div>
+
+        <aside class="hero__aside" aria-hidden="true">
+          <div class="hero__visual" data-visual>
+            <!-- Decorative placeholder for future visuals; purely presentational -->
+            <svg width="320" height="220" viewBox="0 0 320 220" aria-hidden="true" focusable="false" class="visual__svg">
+              <rect width="320" height="220" rx="16" fill="#0f1724" opacity="0.06"></rect>
+            </svg>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Promo block linking to the demo page (discoverable CTA for demo.html) -->
+    <section class="promo demo-promo container" aria-labelledby="demo-promo-title">
+      <div class="promo__card" role="region" aria-labelledby="demo-promo-title" tabindex="-1">
+        <div class="promo__media" role="img" aria-label="Interactive demo preview">
+          Demo preview
+        </div>
+        <div class="promo__body">
+          <h2 id="demo-promo-title" class="promo__title">Interactive demos ? try a prototype</h2>
+          <p class="promo__desc">Explore quick, focused experiments that show how we apply AI to real UX problems. Two short demos illustrate intent, interface, and model behaviors in a compact view.</p>
+          <div class="promo__actions">
+            <a class="btn" href="demo.html" aria-label="View demo page">View demos</a>
+            <a class="btn btn-ghost" href="demo.html#demo-1" aria-label="Jump to demo 1">Jump to Demo 1</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="services" id="services" aria-labelledby="services-title" data-section="services">
+      <div class="container">
+        <h2 id="services-title" class="section__title">What we do</h2>
+        <p class="section__intro">Small, directionally accurate engagements ? prototypes, strategy, and tooling.</p>
+
+        <ul class="services__list" role="list">
+          <li class="service-card card" role="listitem" data-service="prototype">
+            <h3 class="service-card__title">Prototyping</h3>
+            <p class="service-card__body">Rapid exploration of product concepts with interactive AI-driven prototypes.</p>
+            <a class="service-card__link" href="#contact" aria-label="Learn more about prototyping">Learn more</a>
+          </li>
+
+          <li class="service-card card" role="listitem" data-service="strategy">
+            <h3 class="service-card__title">AI Strategy</h3>
+            <p class="service-card__body">Define responsible, scalable approaches to integrating AI into your product roadmap.</p>
+            <a class="service-card__link" href="about.html" aria-label="Learn more about AI strategy">Learn more</a>
+          </li>
+
+          <li class="service-card card" role="listitem" data-service="tooling">
+            <h3 class="service-card__title">Tooling & Ops</h3>
+            <p class="service-card__body">Build pragmatic tooling and processes to support ML/AI teams in production.</p>
+            <a class="service-card__link" href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="Visit external tooling page">Visit</a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Contact section added to resolve broken '#contact' anchors -->
+    <section class="contact" id="contact" aria-labelledby="contact-title" data-section="contact">
+      <div class="container">
+        <h2 id="contact-title" class="section__title">Get in touch</h2>
+        <p class="section__intro">Interested in a prototype or engagement? Send us a short note and we'll follow up.</p>
+
+        <p class="mb-0">
+          <a class="btn" href="mailto:hello@example.com" aria-label="Email Atlas AI">Email us</a>
+          <a class="btn btn-ghost" href="about.html" aria-label="Learn more about Atlas AI">About</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="newsletter" id="newsletter" aria-labelledby="newsletter-title" data-section="newsletter">
+      <div class="container">
+        <h2 id="newsletter-title" class="section__title">Stay in the loop</h2>
+        <p class="section__intro">Sign up for occasional updates on experiments and prototypes.</p>
+
+        <form class="form form--inline" id="newsletter-form" action="#" method="post" role="form" aria-label="Subscribe to newsletter" data-form>
+          <label for="email" class="sr-only">Email address</label>
+          <input id="email" class="input input--email" name="email" type="email" inputmode="email" placeholder="you@company.com" required aria-required="true" />
+          <button type="submit" class="btn" aria-label="Subscribe">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer__brand">
+        <a href="index.html" class="brand footer-brand" aria-label="Atlas AI Home">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span class="brand__name">Atlas AI</span>
+        </a>
+        <p class="footer__copyright">&copy; <span data-year>2025</span> Atlas AI ? example project</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Footer" role="navigation">
+        <ul class="footer-nav__list">
+          <li><a href="about.html" class="footer-nav__link">About</a></li>
+          <li><a href="demo.html" class="footer-nav__link">Demo</a></li>
+          <li><a href="#services" class="footer-nav__link">Services</a></li>
+          <li><a href="https://example.com/privacy" class="footer-nav__link" target="_blank" rel="noopener noreferrer">Privacy</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Small defensive inline script:
+       - Ensure the displayed year is current (only DOM-manipulation; non-invasive).
+       - Do light defensive wiring of aria-controls if the ID is missing.
+       - Keep ids and data- attributes consistent with JS initializers that will run from script.js.
+  -->
+  <script>
+    (function () {
+      'use strict';
+      try {
+        // Update any [data-year] placeholders to the current year
+        var yearEl = document.querySelector('[data-year]');
+        if (yearEl) {
+          var now = new Date();
+          var y = now.getFullYear();
+          if (yearEl.textContent.trim() !== String(y)) {
+            yearEl.textContent = y;
+          }
+        }
+
+        // Defensive aria-controls wiring: ensure navToggle references an existing element
+        var navToggle = document.querySelector('[data-js="nav-toggle"], [data-nav-toggle], .nav-toggle, #navToggle');
+        var nav = document.querySelector('[data-js="nav"], [data-nav], .site-nav, #siteNav');
+        if (navToggle && nav) {
+          var ariaControls = navToggle.getAttribute('aria-controls');
+          var target = ariaControls ? document.getElementById(ariaControls) : null;
+          if (!target) {
+            var fallbackList = nav.querySelector('.nav-list, [data-js="nav-list"], [data-nav-list]');
+            if (fallbackList) {
+              if (!fallbackList.id) { fallbackList.id = 'site-nav-list'; }
+              navToggle.setAttribute('aria-controls', fallbackList.id);
+            }
+          }
+          // Ensure the nav panel has aria-hidden initial state consistent with aria-expanded
+          var navPanel = nav.querySelector('.nav-panel, [data-js="nav-panel"], [data-nav-panel]') || document.getElementById('site-nav-panel');
+          if (navPanel && navToggle.getAttribute('aria-expanded') === 'false') {
+            navPanel.setAttribute('aria-hidden', 'true');
+          }
+        }
+      } catch (e) {
+        // Non-critical defensive code should fail silently
+      }
+    }());
+  </script>
+
+  <!-- Shared script (defensive hooks + page initializers).
+       script.js contains initDemoBlocks() and other initializers and is loaded deferred. -->
+  <script defer src="script.js" id="site-script"></script>
+</body>
+</html>
