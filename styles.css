@@ -240,19 +240,42 @@ body.nav-open .nav-panel,
   .hero{ padding-top: var(--space-xxl); }
 }
 
-/* Demo list and cards (new) */
-.demos{
+/* Demo page: namespaced under .demo-page to avoid style leakage and support multiple markup variants
+   Includes aliases (camelCase and kebab-case) to be resilient to differing HTML conventions. */
+.demo-page,
+.demoPage { /* root page padding and context for demo-specific styling */
+  padding: var(--space-lg) 0;
+}
+
+/* Grid container for demos (aliases: .demos, .demo-grid, .demoGrid) */
+.demo-page .demos,
+.demo-page .demo-grid,
+.demo-page .demoGrid,
+.demoPage .demos,
+.demoPage .demoGrid {
   display:grid;
   gap:var(--space-lg);
   grid-template-columns: 1fr;
   margin-top:var(--space-lg);
   align-items:start;
+  /* gentle entrance offset for the whole list in case JS animates */
+  will-change: transform, opacity;
 }
 @media (min-width:700px){
-  .demos{ grid-template-columns: repeat(2, 1fr); }
+  .demo-page .demos,
+  .demo-page .demo-grid,
+  .demo-page .demoGrid,
+  .demoPage .demos,
+  .demoPage .demoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.demo-block{
+/* Individual demo block: support both .demo-block and camelCase .demoBlock */
+.demo-page .demo-block,
+.demo-page .demoBlock,
+.demoPage .demo-block,
+.demoPage .demoBlock {
   background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
   border:1px solid var(--color-border);
   padding:var(--space-md);
@@ -261,16 +284,73 @@ body.nav-open .nav-panel,
   display:flex;
   flex-direction:column;
   gap:var(--space-sm);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
   min-height:260px;
+  position:relative;
+  overflow:visible;
+  transform-origin:center;
+  opacity:0;
+  transform: translateY(10px) scale(.998);
+  will-change: transform, opacity;
+  /* subtle decorative left accent */
 }
-.demo-block:hover{ transform: translateY(-6px); box-shadow: 0 22px 60px rgba(2,6,23,0.6); }
+.demo-page .demo-block::before,
+.demo-page .demoBlock::before,
+.demoPage .demo-block::before,
+.demoPage .demoBlock::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 6px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(124,92,255,0.85), rgba(110,231,183,0.85));
+  opacity: 0.10;
+  transform-origin: left center;
+  pointer-events: none;
+}
 
-.demo-block h2{ font-size:var(--fs-2); margin-bottom:4px; color:var(--color-foreground); }
-.demo-block p{ margin-bottom:0; color:var(--color-muted); font-size:var(--fs-3); }
+/* staggered reveal using nth-child - graceful if multiple demo-blocks present */
+.demo-page .demos .demo-block:nth-child(1),
+.demo-page .demo-grid .demo-block:nth-child(1) { animation: demoFadeIn 420ms var(--transition-base) forwards 60ms; }
+.demo-page .demos .demo-block:nth-child(2),
+.demo-page .demos .demo-block:nth-child(3) { animation: demoFadeIn 420ms var(--transition-base) forwards 120ms; }
+.demo-page .demos .demo-block:nth-child(4) { animation: demoFadeIn 420ms var(--transition-base) forwards 180ms; }
 
-/* Visual placeholder for demos: uses modern aspect-ratio if available with a padding fallback */
-.demo-placeholder{
+/* Hover / focus states on the block */
+.demo-page .demo-block:hover,
+.demoPage .demoBlock:hover {
+  transform: translateY(-8px) scale(1);
+  box-shadow: 0 30px 80px rgba(2,6,23,0.6);
+  opacity:1;
+}
+.demo-page .demo-block:focus-within{
+  box-shadow: 0 30px 70px rgba(2,6,23,0.62), 0 0 0 6px rgba(124,92,255,0.04);
+  transform: translateY(-6px) scale(1);
+  opacity:1;
+}
+
+/* Title, description, and small helpers inside demo-block */
+.demo-page .demo-block h2,
+.demoPage .demoBlock h2 {
+  font-size:var(--fs-2);
+  margin-bottom:6px;
+  color:var(--color-foreground);
+}
+.demo-page .demo-block p,
+.demoPage .demoBlock p {
+  margin-bottom:0;
+  color:var(--color-muted);
+  font-size:var(--fs-3);
+  line-height:1.45;
+}
+
+/* Media placeholder (supports <img> or svg or empty element with role="img") */
+.demo-page .demo-placeholder,
+.demoPage .demoPlaceholder,
+.demo-page .demo-block__media,
+.demo-page .demoBlock__media {
   width:100%;
   border-radius:var(--radius-sm);
   overflow:hidden;
@@ -285,11 +365,23 @@ body.nav-open .nav-panel,
   border:1px dashed rgba(255,255,255,0.03);
   text-align:center;
   padding:12px;
+  flex-shrink:0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
-.demo-placeholder img{ width:100%; height:100%; object-fit:cover; display:block; }
+.demo-page .demo-placeholder img,
+.demo-page .demoBlock__media img { width:100%; height:100%; object-fit:cover; display:block; }
 
-/* CTA inside demo cards */
-.demo-cta{
+/* Make media subtly parallax on hover of the parent card */
+.demo-page .demo-block:hover .demo-placeholder,
+.demo-page .demo-block:focus-within .demo-placeholder { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 40px rgba(2,6,23,0.35); }
+
+/* CTA inside demo cards
+   Support both .demo-cta and .demo-block__cta and camelCase .demoBlock__cta so JS/markup mismatches don't break styling */
+.demo-page .demo-cta,
+.demo-page .demo-block__cta,
+.demo-page .demoBlock__cta,
+.demoPage .demo-cta,
+.demoPage .demoBlock__cta {
   margin-top:auto;
   align-self:flex-start;
   display:inline-flex;
@@ -302,13 +394,27 @@ body.nav-open .nav-panel,
   border: none;
   font-weight:800;
   cursor:pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast), filter var(--transition-fast);
+  text-decoration:none;
+  -webkit-tap-highlight-color: transparent;
 }
-.demo-cta:hover{ transform: translateY(-3px); box-shadow: 0 14px 36px rgba(79,209,197,0.12); }
-.demo-cta:focus{ outline: none; box-shadow: 0 0 0 6px rgba(79,209,197,0.12); border-radius:10px; }
-.demo-cta:active{ transform: translateY(-1px); }
+.demo-page .demo-cta:hover,
+.demo-page .demo-block__cta:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(79,209,197,0.12); filter:brightness(1.03); }
 
-/* Demo modal & overlay (used by demo CTAs) */
+/* Use :focus-visible to provide visible focus only for keyboard users and keep high contrast ring */
+.demo-page .demo-cta:focus-visible,
+.demo-page .demo-block__cta:focus-visible,
+.demoPage .demoBlock__cta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(79,209,197,0.16), 0 8px 30px rgba(2,6,23,0.35);
+  border-radius:10px;
+}
+
+/* Active press */
+.demo-page .demo-cta:active,
+.demo-page .demo-block__cta:active { transform: translateY(-1px) scale(.998); }
+
+/* Demo modal & overlay (used by demo CTAs) - improved visuals and transitions */
 .modal-overlay{
   position: fixed;
   inset:0;
@@ -320,18 +426,22 @@ body.nav-open .nav-panel,
   opacity:0;
   visibility:hidden;
   transition: opacity var(--transition-base), visibility var(--transition-fast);
+  backdrop-filter: blur(6px) saturate(120%);
 }
 .modal-overlay.is-open{ opacity:1; visibility:visible; }
 
 .modal-content{
-  width: min(720px, calc(100% - 48px));
+  width: min(820px, calc(100% - 48px));
   background: linear-gradient(180deg, rgba(11,18,28,0.98), rgba(8,12,18,0.95));
   border:1px solid var(--color-border);
   padding:var(--space-lg);
-  border-radius:var(--radius-lg);
-  box-shadow: 0 40px 80px rgba(2,6,23,0.8);
-  transform: translateY(6px) scale(.98);
-  transition: transform var(--transition-base);
+  border-radius:calc(var(--radius-lg) + 4px);
+  box-shadow: 0 40px 120px rgba(2,6,23,0.85);
+  transform: translateY(6px) scale(.99);
+  transition: transform var(--transition-base), opacity var(--transition-base);
+  opacity:0.98;
+  max-height: calc(100vh - 96px);
+  overflow:auto;
 }
 .modal-overlay.is-open .modal-content{ transform: translateY(0) scale(1); }
 
@@ -362,6 +472,137 @@ body.nav-open .nav-panel,
 .site-footer{ padding:var(--space-lg) 0; border-top:1px solid var(--color-border); background:linear-gradient(180deg, rgba(3,6,10,0.2), transparent); }
 .site-footer .container{ display:flex; gap:var(--space-md); align-items:center; justify-content:space-between; flex-wrap:wrap; }
 
+/* Enhanced footer & aliasing for accessibility and UX polish
+   - Provide .footer alias and camelCase .siteFooter for broader compatibility with markup variants
+   - Ensure link contrast meets WCAG AA, clear hover/active states, visible keyboard focus,
+     and comfortable touch target sizes (min 44px). */
+.siteFooter,
+.site-footer,
+.footer {
+  padding: var(--space-lg) 0;
+  border-top: 1px solid var(--color-border);
+  background: linear-gradient(180deg, rgba(3,6,10,0.22), transparent);
+  color: var(--color-muted);
+}
+
+.siteFooter .container,
+.site-footer .container,
+.footer .container {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* Footer content layout helpers - small screens stack, center align */
+.siteFooter .container > * ,
+.site-footer .container > * ,
+.footer .container > * {
+  min-width: 0;
+}
+@media (max-width:680px){
+  .siteFooter .container,
+  .site-footer .container,
+  .footer .container {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-sm);
+  }
+}
+
+/* Footer link group helper (if markup uses .footer-links or .footerLinks) */
+.footer-links,
+.footerLinks,
+.site-footer .footer-links,
+.siteFooter .footerLinks {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Footer links: strong contrast and accessible hit target */
+.site-footer a,
+.siteFooter a,
+.footer a {
+  color: var(--color-foreground); /* ensures high contrast on dark footer */
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 10px; /* comfortable touch target */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Visited state subtle */
+.site-footer a:visited,
+.siteFooter a:visited,
+.footer a:visited {
+  color: rgba(230,238,248,0.9);
+}
+
+/* Hover & active states: visible change without losing context */
+.site-footer a:hover,
+.siteFooter a:hover,
+.footer a:hover {
+  color: var(--color-accent-2);
+  background: rgba(255,255,255,0.02);
+  transform: translateY(-2px);
+}
+
+/* Active press */
+.site-footer a:active,
+.siteFooter a:active,
+.footer a:active {
+  transform: translateY(0);
+  opacity: 0.92;
+}
+
+/* Distinct, visible focus for keyboard users (focus-visible) */
+.site-footer a:focus-visible,
+.siteFooter a:focus-visible,
+.footer a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 6px rgba(110,231,183,0.12);
+  border: 1px solid rgba(110,231,183,0.06);
+  background: rgba(110,231,183,0.02);
+  color: var(--color-foreground);
+  border-radius: 8px;
+}
+
+/* Subtle separators often used in footers: center them and ensure accessible whitespace */
+.footer-divider,
+.site-footer .divider,
+.siteFooter .divider {
+  color: rgba(255,255,255,0.06);
+  margin: 0 6px;
+  font-weight: 600;
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Footer small print */
+.site-footer small,
+.siteFooter small,
+.footer small {
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+/* Make sure footer links and small print wrap gracefully */
+.site-footer .container a,
+.footer .container a { white-space: nowrap; }
+
+/* Accessibility: ensure keyboard focus order visible for footer items */
+.site-footer a:focus,
+.footer a:focus { box-shadow: 0 0 0 6px rgba(110,231,183,0.08); }
+
 /* Small touches */
 .kicker{ display:inline-block; padding:6px 10px; border-radius:999px; background:linear-gradient(90deg, rgba(124,92,255,0.14), rgba(110,231,183,0.06)); color:var(--color-accent); font-weight:700; font-size:.85rem; }
 
@@ -373,6 +614,12 @@ body.nav-open .nav-panel,
 /* Reduced motion preference */
 @media (prefers-reduced-motion: reduce){
   *{ transition: none !important; animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
+/* Demo fade-in keyframes */
+@keyframes demoFadeIn {
+  from { opacity:0; transform: translateY(10px) scale(.998); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
 }
 
 /* Responsive typography tweaks */
@@ -427,6 +674,218 @@ img{ max-width:100%; height:auto; display:block; }
 /* Ensure focus order is visible for keyboard-only users */
 a, button, input, .nav-link, .nav__link{ -webkit-tap-highlight-color: transparent; }
 a:focus-visible, button:focus-visible, .nav-link:focus-visible, .nav__link:focus-visible{ box-shadow: 0 0 0 6px rgba(110,231,183,0.06); border-radius:8px; }
+
+/* ============================
+   Services section (What We Do)
+   - Responsive grid: <=640px 1col, 641?960px 2col, >960px 3col
+   - Graceful degradation: more content visible by default; hidden only when JS is active (.js)
+   - Accessible focus and hover states
+   ============================ */
+
+.services{
+  padding: calc(var(--space-lg) + 4px) 0;
+  margin-bottom: var(--space-xl);
+}
+.services .container{ max-width: var(--container-max); }
+.services__title{ font-size:var(--fs-2); margin-bottom:var(--space-md); color:var(--color-foreground); }
+
+/* Grid layout */
+.services-grid{
+  display:grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr;
+  align-items:start;
+}
+
+/* Tablet: 2 columns */
+@media (min-width:641px){
+  .services-grid{
+    grid-template-columns: repeat(2, 1fr);
+    gap: calc(var(--space-lg));
+  }
+}
+
+/* Desktop: 3 columns */
+@media (min-width:961px){
+  .services-grid{
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--space-lg) + 8px);
+  }
+}
+
+/* Individual service card */
+.service-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.016), rgba(255,255,255,0.008));
+  border: 1px solid var(--color-border);
+  padding: calc(var(--space-sm) + 6px);
+  border-radius: calc(var(--radius-md) + 2px);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.45);
+  display:flex;
+  flex-direction:column;
+  gap: var(--space-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-fast);
+  min-height: 160px;
+  position:relative;
+  overflow:visible;
+}
+
+/* Hover and focused card visuals */
+.service-card:hover,
+.service-card:focus-within{
+  transform: translateY(-10px);
+  box-shadow: 0 40px 110px rgba(2,6,23,0.62);
+  border-color: rgba(124,92,255,0.06);
+}
+
+/* Make card focusable when JS initializes (some markups will add tabindex) */
+.service-card[tabindex]{
+  cursor:pointer;
+  outline: none;
+}
+
+/* Visible focus ring for keyboard users */
+.service-card:focus-visible{
+  box-shadow: 0 0 0 8px rgba(124,92,255,0.06), 0 30px 70px rgba(2,6,23,0.6);
+  border-color: rgba(124,92,255,0.08);
+  transform: translateY(-8px);
+}
+
+/* Title and metadata */
+.service-title{
+  font-size: var(--fs-2);
+  line-height: 1.06;
+  color: var(--color-foreground);
+  margin-bottom: 2px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 8px;
+}
+.service-title .serviceLabel{
+  font-size: 0.78rem;
+  color: var(--color-accent);
+  font-weight:800;
+  margin-left:auto;
+  background: rgba(124,92,255,0.06);
+  padding: 4px 8px;
+  border-radius:999px;
+  letter-spacing:0.4px;
+}
+
+/* Short description always visible */
+.service-desc{
+  color: var(--color-muted);
+  font-size: var(--fs-3);
+  line-height: 1.45;
+  margin-bottom: 0;
+}
+
+/* Extended description ? visible by default (graceful degradation)
+   but hidden when JS is active (.js) and the card is not expanded.
+   Use max-height transitions for smooth expansion/collapse. */
+
+.service-desc--more{
+  /* default: visible (no-JS safe) */
+  color: var(--color-muted);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  margin-top: 8px;
+  transition: max-height var(--transition-base), opacity var(--transition-fast), transform var(--transition-fast);
+  overflow: hidden;
+  max-height: 2000px; /* allow full content by default for no-JS */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* When JS is enabled, hide the extra content until expanded */
+.js .service-card .service-desc--more{
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  padding-top: 0;
+  margin-top: 0;
+}
+
+/* Expanded state controlled by JS by toggling .is-expanded on .service-card */
+.js .service-card.is-expanded .service-desc--more{
+  max-height: 1200px; /* generous limit for animation */
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-xs);
+}
+
+/* Visual indicator & subtle divider */
+.service-footer{
+  margin-top:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding-top: var(--space-sm);
+  border-top: 1px dashed rgba(255,255,255,0.02);
+  margin-top: var(--space-sm);
+}
+
+/* CTA ? small, clear, accessible */
+.learn-more-btn{
+  all:unset;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:8px;
+  background: linear-gradient(90deg, rgba(124,92,255,0.12), rgba(110,231,183,0.06));
+  color: var(--color-foreground);
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  border:1px solid transparent;
+}
+.learn-more-btn:hover{
+  transform: translateY(-3px);
+  background: linear-gradient(90deg, rgba(124,92,255,0.18), rgba(110,231,183,0.09));
+}
+.learn-more-btn:focus-visible{
+  outline:none;
+  box-shadow: 0 0 0 8px rgba(110,231,183,0.06);
+  border-color: rgba(110,231,183,0.08);
+}
+
+/* State styling using aria-expanded if present on the controlling element
+   (helps screen reader users understand current state) */
+.service-card[aria-expanded="true"]{
+  border-color: rgba(110,231,183,0.06);
+  box-shadow: 0 30px 90px rgba(2,6,23,0.6);
+}
+
+/* Tiny microcopy label for placeholders to make replacement obvious */
+.serviceLabelPlaceholder{
+  font-weight:700;
+  font-size:0.75rem;
+  color:var(--color-accent-2);
+  background: rgba(124,92,255,0.04);
+  padding:4px 8px;
+  border-radius:999px;
+}
+
+/* Ensure keyboard order is visible for interactive bits inside the card */
+.service-card a, .service-card button{ -webkit-tap-highlight-color: transparent; }
+.service-card a:focus-visible, .service-card button:focus-visible{ box-shadow: 0 0 0 6px rgba(110,231,183,0.06); border-radius:8px; }
+
+/* Accessibility note: don't hide content purely with display:none to ensure screen readers can read
+   the additional text when JS is disabled. We scope hiding under .js so it only applies when JS runs. */
+
+/* Small responsive tweaks for card spacing on narrow screens */
+@media (max-width:440px){
+  .service-card{ padding: calc(var(--space-sm)); min-height:140px; }
+  .service-title{ font-size: 1.05rem; }
+}
+
+/* ============================
+   End Services section
+   ============================ */
 
 /* Performance: critical CSS kept small; non-critical can be loaded later in real app */
 /* End of styles.css */
